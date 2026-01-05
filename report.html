@@ -3,479 +3,577 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Field Report - Official Document</title>
+    <title>Daily Report - FieldVoice Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'dot-navy': '#0a1628',
-                        'dot-blue': '#1e3a5f',
-                        'dot-slate': '#334155',
-                        'dot-orange': '#ea580c',
-                        'dot-yellow': '#f59e0b',
-                        'safety-green': '#16a34a',
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
         @media print {
-            body { background: white !important; }
-            .no-print { display: none !important; }
-            .print-page { page-break-after: always; break-after: page; }
-            .print-page:last-child { page-break-after: avoid; break-after: avoid; }
-            .print-section { page-break-inside: avoid; }
+            .print-hidden { display: none !important; }
+            .page-break { page-break-before: always; }
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            @page { margin: 0.5in; }
         }
-        .header-stripe {
-            background: repeating-linear-gradient(-45deg, #f59e0b, #f59e0b 10px, #0a1628 10px, #0a1628 20px);
-            height: 4px;
-        }
-        .official-stamp {
-            border: 3px double #1e3a5f;
-            position: relative;
-        }
-        .official-stamp::before {
-            content: '';
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            right: 4px;
-            bottom: 4px;
-            border: 1px solid #1e3a5f;
-            pointer-events: none;
+        .report-page {
+            min-height: 11in;
+            max-width: 8.5in;
         }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen">
-    <!-- NO-PRINT TOOLBAR -->
-    <div class="no-print sticky top-0 z-50 bg-dot-navy border-b border-slate-700">
-        <div class="header-stripe"></div>
-        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
+
+    <!-- NAVIGATION BAR (hidden on print) -->
+    <div class="print-hidden sticky top-0 z-50 bg-white border-b shadow-sm">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2 text-slate-600 font-bold hover:text-slate-800 transition-colors">
                 <i class="fas fa-arrow-left"></i>
-                <span class="text-sm font-medium uppercase">Back</span>
+                <span class="hidden sm:inline">Back to Dashboard</span>
             </a>
             <div class="flex items-center gap-2">
-                <button onclick="exportReport()" class="px-4 py-2 bg-dot-blue text-white text-xs font-bold uppercase hover:bg-blue-800 transition-colors">
-                    <i class="fas fa-file-export mr-2"></i>Export
-                </button>
-                <button onclick="window.print()" class="px-4 py-2 bg-safety-green text-white text-xs font-bold uppercase hover:bg-green-700 transition-colors">
-                    <i class="fas fa-print mr-2"></i>Print
+                <a href="interview.html" class="px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg font-bold text-sm hover:bg-indigo-200 transition-colors">
+                    <i class="fas fa-edit mr-1"></i> Edit
+                </a>
+                <button onclick="window.print()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-bold text-sm shadow-md hover:bg-emerald-700 transition-colors">
+                    <i class="fas fa-print mr-1"></i> Print / PDF
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- REPORT CONTENT -->
-    <div class="max-w-4xl mx-auto p-4 pb-20">
+    <div class="max-w-4xl mx-auto p-4 sm:p-8 print:p-0 print:max-w-none">
 
-        <!-- PAGE 1: OVERVIEW -->
-        <div class="print-page bg-white shadow-lg mb-8">
+        <!-- PAGE 1: OVERVIEW & WORK SUMMARY -->
+        <div id="page1" class="report-page bg-white border-4 border-slate-900 p-1 mb-8 print:mb-0 print:border-2">
             <!-- Header -->
-            <div class="header-stripe"></div>
-            <div class="bg-dot-navy text-white p-6">
-                <div class="flex items-start justify-between">
+            <div class="flex justify-between items-end border-b-2 border-slate-900 pb-2 mb-4 px-2">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-slate-200 flex items-center justify-center text-[8px] font-bold rounded">LOGO</div>
                     <div>
-                        <div class="flex items-center gap-3 mb-2">
-                            <i class="fas fa-clipboard-check text-dot-yellow text-2xl"></i>
-                            <div>
-                                <p class="text-[10px] font-bold tracking-widest text-dot-yellow uppercase">Daily Inspection Report</p>
-                                <h1 class="text-2xl font-bold tracking-tight">Resident Project Representative</h1>
-                            </div>
-                        </div>
+                        <h1 class="text-xl font-black uppercase tracking-tighter">RPR Daily Report</h1>
+                        <p class="text-[10px] text-slate-500 font-bold uppercase">Resident Project Representative</p>
+                    </div>
+                </div>
+                <div class="text-xs font-bold text-right">
+                    <div id="reportDate" class="text-slate-600"></div>
+                    <div>Page 1 of <span id="totalPages">4</span></div>
+                </div>
+            </div>
+
+            <!-- Project Overview Section -->
+            <div class="bg-emerald-900 text-white text-center font-bold py-1 uppercase text-sm mb-2 mx-1">
+                Project Overview
+            </div>
+            <div id="overviewGrid" class="grid grid-cols-2 gap-0 border border-slate-900 text-[10px] mx-1 mb-4">
+                <!-- Filled by JS -->
+            </div>
+
+            <!-- Daily Work Summary Section -->
+            <div class="bg-emerald-900 text-white text-center font-bold py-1 uppercase text-sm mb-2 mx-1">
+                Daily Work Summary
+            </div>
+            <div id="workSummary" class="text-[10px] px-3 py-2 space-y-4 min-h-[350px]">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+
+        <!-- PAGE 2: TABLES -->
+        <div id="page2" class="report-page bg-white border-4 border-slate-900 p-1 mb-8 print:mb-0 print:border-2 page-break">
+            <!-- Header -->
+            <div class="flex justify-between items-end border-b-2 border-slate-900 pb-2 mb-4 px-2">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-slate-200 flex items-center justify-center text-[8px] font-bold rounded">LOGO</div>
+                    <h1 class="text-xl font-black uppercase tracking-tighter">RPR Daily Report</h1>
+                </div>
+                <div class="text-xs font-bold">Page 2 of <span class="totalPages">4</span></div>
+            </div>
+
+            <!-- Daily Operations Table -->
+            <div class="bg-emerald-900 text-white text-center font-bold py-1 uppercase text-sm mb-2 mx-1">
+                Daily Operations (Personnel On-Site)
+            </div>
+            <table id="operationsTable" class="w-full text-[9px] border-collapse border border-slate-900 mx-1 mb-6" style="width: calc(100% - 8px);">
+                <thead class="bg-slate-100">
+                    <tr>
+                        <th class="border border-slate-900 p-1.5 text-left font-black">CONTRACTOR</th>
+                        <th class="border border-slate-900 p-1.5 text-left font-black">TRADE</th>
+                        <th class="border border-slate-900 p-1.5 text-center font-black w-12">SUPER(S)</th>
+                        <th class="border border-slate-900 p-1.5 text-center font-black w-12">FOREMAN</th>
+                        <th class="border border-slate-900 p-1.5 text-center font-black w-12">OPERATOR(S)</th>
+                        <th class="border border-slate-900 p-1.5 text-center font-black w-12">LABORER(S)</th>
+                        <th class="border border-slate-900 p-1.5 text-center font-black w-12">OTHER(S)</th>
+                        <th class="border border-slate-900 p-1.5 text-center font-black w-12 bg-emerald-100">TOTAL</th>
+                    </tr>
+                </thead>
+                <tbody id="operationsBody">
+                    <!-- Filled by JS -->
+                </tbody>
+                <tfoot id="operationsFoot" class="bg-slate-50 font-bold">
+                    <!-- Filled by JS -->
+                </tfoot>
+            </table>
+
+            <!-- Equipment Table -->
+            <div class="bg-emerald-900 text-white text-center font-bold py-1 uppercase text-sm mb-2 mx-1">
+                Mobilized Equipment & Daily Utilization
+            </div>
+            <table class="w-full text-[9px] border-collapse border border-slate-900 mx-1" style="width: calc(100% - 8px);">
+                <thead class="bg-slate-100">
+                    <tr>
+                        <th class="border border-slate-900 p-1.5 text-left font-black">CONTRACTOR</th>
+                        <th class="border border-slate-900 p-1.5 text-left font-black">EQUIPMENT TYPE / MODEL</th>
+                        <th class="border border-slate-900 p-1.5 text-center font-black w-16">QUANTITY</th>
+                        <th class="border border-slate-900 p-1.5 text-left font-black">STATUS / NOTES</th>
+                    </tr>
+                </thead>
+                <tbody id="equipmentBody">
+                    <!-- Filled by JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PAGE 3: ISSUES, QA/QC, SAFETY -->
+        <div id="page3" class="report-page bg-white border-4 border-slate-900 p-1 mb-8 print:mb-0 print:border-2 page-break">
+            <!-- Header -->
+            <div class="flex justify-between items-end border-b-2 border-slate-900 pb-2 mb-4 px-2">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-slate-200 flex items-center justify-center text-[8px] font-bold rounded">LOGO</div>
+                    <h1 class="text-xl font-black uppercase tracking-tighter">RPR Daily Report</h1>
+                </div>
+                <div class="text-xs font-bold">Page 3 of <span class="totalPages">4</span></div>
+            </div>
+
+            <!-- Issues & Delays -->
+            <div class="bg-emerald-900 text-white text-center font-bold py-1 uppercase text-sm mb-2 mx-1">
+                Issues, Delays & RFIs
+            </div>
+            <div id="issuesSection" class="text-[10px] px-3 py-2 mb-4 min-h-[80px] border border-slate-200 mx-1 rounded">
+                <!-- Filled by JS -->
+            </div>
+
+            <!-- Communications & Visitors -->
+            <div class="bg-emerald-900 text-white text-center font-bold py-1 uppercase text-sm mb-2 mx-1">
+                Communications & Visitors
+            </div>
+            <div id="visitorsSection" class="text-[10px] px-3 py-2 mb-4 min-h-[60px] border border-slate-200 mx-1 rounded">
+                <!-- Filled by JS -->
+            </div>
+
+            <!-- QA/QC Inspections -->
+            <div class="bg-emerald-900 text-white text-center font-bold py-1 uppercase text-sm mb-2 mx-1">
+                QA/QC Testing & Inspections
+            </div>
+            <div id="qaqcSection" class="text-[10px] px-3 py-2 mb-4 min-h-[80px] border border-slate-200 mx-1 rounded">
+                <!-- Filled by JS -->
+            </div>
+
+            <!-- Safety & Incidents -->
+            <div class="bg-emerald-900 text-white text-center font-bold py-1 uppercase text-sm mb-2 mx-1">
+                Safety & Incidents
+            </div>
+            <div id="safetySection" class="text-[10px] px-3 py-2 min-h-[80px] border border-slate-200 mx-1 rounded">
+                <!-- Filled by JS -->
+            </div>
+
+            <!-- Signature Block -->
+            <div class="mt-8 mx-1 border-t-2 border-slate-900 pt-4">
+                <div class="flex justify-between items-end">
+                    <div class="text-[9px] text-slate-500 font-bold uppercase">
+                        Report prepared by Resident Project Representative
                     </div>
                     <div class="text-right">
-                        <p class="text-xs text-slate-400 uppercase">Document No.</p>
-                        <p id="reportDocNo" class="text-lg font-bold text-dot-yellow">--</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Project Info -->
-            <div class="p-6 border-b-2 border-slate-200">
-                <div class="grid grid-cols-2 gap-6">
-                    <div>
-                        <p class="text-xs font-bold text-dot-blue uppercase tracking-wider mb-1">Project Name</p>
-                        <p id="projectName" class="text-lg font-bold text-slate-800">--</p>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-dot-blue uppercase tracking-wider mb-1">Report Date</p>
-                        <p id="reportDate" class="text-lg font-bold text-slate-800">--</p>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-dot-blue uppercase tracking-wider mb-1">NOAB Project No.</p>
-                        <p id="noabProjectNo" class="text-base font-medium text-slate-700">--</p>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-dot-blue uppercase tracking-wider mb-1">Contract Day</p>
-                        <p id="contractDay" class="text-base font-medium text-slate-700">--</p>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-dot-blue uppercase tracking-wider mb-1">Contractor</p>
-                        <p id="contractor" class="text-base font-medium text-slate-700">--</p>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-dot-blue uppercase tracking-wider mb-1">Location</p>
-                        <p id="location" class="text-base font-medium text-slate-700">--</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Weather -->
-            <div class="p-6 border-b-2 border-slate-200">
-                <h2 class="flex items-center gap-2 text-sm font-bold text-dot-blue uppercase tracking-wider mb-4">
-                    <i class="fas fa-cloud-sun"></i>
-                    Weather Conditions
-                </h2>
-                <div class="grid grid-cols-4 gap-4">
-                    <div class="text-center p-4 bg-slate-50 border border-slate-200">
-                        <p class="text-xs text-slate-500 uppercase mb-1">Condition</p>
-                        <p id="weatherCondition" class="text-sm font-bold text-slate-800">--</p>
-                    </div>
-                    <div class="text-center p-4 bg-slate-50 border border-slate-200">
-                        <p class="text-xs text-slate-500 uppercase mb-1">High Temp</p>
-                        <p id="weatherHigh" class="text-sm font-bold text-slate-800">--</p>
-                    </div>
-                    <div class="text-center p-4 bg-slate-50 border border-slate-200">
-                        <p class="text-xs text-slate-500 uppercase mb-1">Low Temp</p>
-                        <p id="weatherLow" class="text-sm font-bold text-slate-800">--</p>
-                    </div>
-                    <div class="text-center p-4 bg-slate-50 border border-slate-200">
-                        <p class="text-xs text-slate-500 uppercase mb-1">Precipitation</p>
-                        <p id="weatherPrecip" class="text-sm font-bold text-slate-800">--</p>
-                    </div>
-                </div>
-                <div class="mt-4 p-4 bg-slate-50 border border-slate-200">
-                    <p class="text-xs text-slate-500 uppercase mb-1">Site Conditions</p>
-                    <p id="siteConditions" class="text-sm text-slate-800">--</p>
-                </div>
-            </div>
-
-            <!-- Work Hours -->
-            <div class="p-6 border-b-2 border-slate-200">
-                <h2 class="flex items-center gap-2 text-sm font-bold text-dot-blue uppercase tracking-wider mb-4">
-                    <i class="fas fa-clock"></i>
-                    Work Hours
-                </h2>
-                <div class="grid grid-cols-3 gap-4">
-                    <div class="text-center p-4 bg-slate-50 border border-slate-200">
-                        <p class="text-xs text-slate-500 uppercase mb-1">Start Time</p>
-                        <p id="startTime" class="text-lg font-bold text-slate-800">--</p>
-                    </div>
-                    <div class="text-center p-4 bg-slate-50 border border-slate-200">
-                        <p class="text-xs text-slate-500 uppercase mb-1">End Time</p>
-                        <p id="endTime" class="text-lg font-bold text-slate-800">--</p>
-                    </div>
-                    <div class="text-center p-4 bg-safety-green/10 border-2 border-safety-green">
-                        <p class="text-xs text-safety-green uppercase mb-1">Duration</p>
-                        <p id="duration" class="text-lg font-bold text-safety-green">--</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Contractors On Site -->
-            <div class="p-6">
-                <h2 class="flex items-center gap-2 text-sm font-bold text-dot-blue uppercase tracking-wider mb-4">
-                    <i class="fas fa-users"></i>
-                    Contractors On Site
-                </h2>
-                <div id="contractorsList" class="flex flex-wrap gap-2">
-                    <span class="text-slate-400">No contractors listed</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- PAGE 2: ACTIVITIES & PERSONNEL -->
-        <div class="print-page bg-white shadow-lg mb-8">
-            <div class="header-stripe"></div>
-            <div class="bg-dot-navy text-white p-4">
-                <h2 class="text-lg font-bold uppercase">Work Activities & Personnel</h2>
-            </div>
-
-            <!-- Activities -->
-            <div class="p-6 border-b-2 border-slate-200">
-                <h3 class="flex items-center gap-2 text-sm font-bold text-dot-blue uppercase tracking-wider mb-4">
-                    <i class="fas fa-tasks"></i>
-                    Work Performed
-                </h3>
-                <div id="activitiesList" class="space-y-3">
-                    <p class="text-slate-400">No activities recorded</p>
-                </div>
-            </div>
-
-            <!-- Personnel Counts -->
-            <div class="p-6 border-b-2 border-slate-200">
-                <h3 class="flex items-center gap-2 text-sm font-bold text-dot-blue uppercase tracking-wider mb-4">
-                    <i class="fas fa-clipboard-list"></i>
-                    Personnel Counts
-                </h3>
-                <div id="personnelTable" class="overflow-x-auto">
-                    <p class="text-slate-400">No personnel data recorded</p>
-                </div>
-            </div>
-
-            <!-- Equipment -->
-            <div class="p-6">
-                <h3 class="flex items-center gap-2 text-sm font-bold text-dot-blue uppercase tracking-wider mb-4">
-                    <i class="fas fa-truck-pickup"></i>
-                    Equipment On Site
-                </h3>
-                <div id="equipmentList" class="space-y-2">
-                    <p class="text-slate-400">No equipment recorded</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- PAGE 3: ISSUES, INSPECTIONS, SAFETY -->
-        <div class="print-page bg-white shadow-lg mb-8">
-            <div class="header-stripe"></div>
-            <div class="bg-dot-navy text-white p-4">
-                <h2 class="text-lg font-bold uppercase">Issues, Inspections & Safety</h2>
-            </div>
-
-            <!-- Issues -->
-            <div class="p-6 border-b-2 border-slate-200">
-                <h3 class="flex items-center gap-2 text-sm font-bold text-dot-orange uppercase tracking-wider mb-4">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    Issues & Delays
-                </h3>
-                <div id="issuesList" class="space-y-3">
-                    <p class="text-slate-400">No issues reported</p>
-                </div>
-            </div>
-
-            <!-- QA/QC -->
-            <div class="p-6 border-b-2 border-slate-200">
-                <h3 class="flex items-center gap-2 text-sm font-bold text-violet-600 uppercase tracking-wider mb-4">
-                    <i class="fas fa-check-double"></i>
-                    QA/QC Inspections
-                </h3>
-                <div id="inspectionsList" class="space-y-3">
-                    <p class="text-slate-400">No inspections recorded</p>
-                </div>
-            </div>
-
-            <!-- Safety -->
-            <div class="p-6 border-b-2 border-slate-200">
-                <h3 class="flex items-center gap-2 text-sm font-bold text-safety-green uppercase tracking-wider mb-4">
-                    <i class="fas fa-hard-hat"></i>
-                    Safety
-                </h3>
-                <div id="safetyStatus" class="mb-4"></div>
-                <div id="safetyNotes" class="space-y-3">
-                    <p class="text-slate-400">No safety notes</p>
-                </div>
-            </div>
-
-            <!-- Visitors -->
-            <div class="p-6">
-                <h3 class="flex items-center gap-2 text-sm font-bold text-dot-blue uppercase tracking-wider mb-4">
-                    <i class="fas fa-user-tie"></i>
-                    Visitors & Communications
-                </h3>
-                <div id="visitorsList" class="space-y-3">
-                    <p class="text-slate-400">No visitors or communications recorded</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- PAGE 4: PHOTOS -->
-        <div id="photosPage" class="print-page bg-white shadow-lg mb-8 hidden">
-            <div class="header-stripe"></div>
-            <div class="bg-dot-navy text-white p-4">
-                <h2 class="text-lg font-bold uppercase">Progress Photos</h2>
-            </div>
-            <div class="p-6">
-                <div id="photosGrid" class="grid grid-cols-2 gap-4">
-                    <p class="text-slate-400">No photos</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- SIGNATURE -->
-        <div class="print-section bg-white shadow-lg mb-8">
-            <div class="header-stripe"></div>
-            <div class="p-6">
-                <div class="flex justify-between items-end gap-8">
-                    <div class="flex-1">
-                        <p class="text-xs font-bold text-dot-blue uppercase tracking-wider mb-2">Prepared By</p>
-                        <div class="border-b-2 border-slate-400 pb-1">
-                            <p id="preparedBy" class="text-lg font-bold text-slate-800">--</p>
+                        <div id="signatureLine" class="border-b border-slate-900 w-56 mb-1 h-8 flex items-end justify-center">
+                            <span class="italic font-serif text-lg text-slate-700"></span>
                         </div>
-                        <p class="text-xs text-slate-500 mt-1">Resident Project Representative</p>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-xs font-bold text-dot-blue uppercase tracking-wider mb-2">Date</p>
-                        <div class="border-b-2 border-slate-400 pb-1">
-                            <p id="signatureDate" class="text-lg font-bold text-slate-800">--</p>
-                        </div>
+                        <div class="text-[8px] font-bold text-slate-500 uppercase">RPR Signature / Date</div>
                     </div>
                 </div>
             </div>
-            <div class="bg-dot-navy text-center py-3">
-                <p class="text-[10px] text-slate-500 uppercase tracking-widest">
-                    <i class="fas fa-shield-alt mr-1"></i>
-                    DOT Compliant Field Documentation System
-                </p>
+        </div>
+
+        <!-- PAGE 4: PHOTOS (conditional) -->
+        <div id="page4" class="report-page bg-white border-4 border-slate-900 p-1 mb-8 print:mb-0 print:border-2 page-break hidden">
+            <!-- Header -->
+            <div class="flex justify-between items-end border-b-2 border-slate-900 pb-2 mb-4 px-2">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-slate-200 flex items-center justify-center text-[8px] font-bold rounded">LOGO</div>
+                    <h1 class="text-xl font-black uppercase tracking-tighter">RPR Daily Report</h1>
+                </div>
+                <div class="text-xs font-bold">Page 4 of <span class="totalPages">4</span></div>
+            </div>
+
+            <!-- Photos Section -->
+            <div class="bg-emerald-900 text-white text-center font-bold py-1 uppercase text-sm mb-4 mx-1">
+                Daily Progress Photos
+            </div>
+            <div id="photosGrid" class="grid grid-cols-2 gap-4 px-3">
+                <!-- Filled by JS -->
             </div>
         </div>
     </div>
 
     <script>
+        // ============ STATE MANAGEMENT ============
+        function getReportKey() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('key') || getTodayKey();
+        }
+
         function getTodayKey() {
             return `fieldvoice_report_${new Date().toISOString().split('T')[0]}`;
         }
 
         function getReport() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const specificKey = urlParams.get('key');
-            if (specificKey) {
-                const saved = localStorage.getItem(specificKey);
-                if (saved) { try { return JSON.parse(saved); } catch (e) {} }
+            const key = getReportKey();
+
+            // Try specific key first
+            const saved = localStorage.getItem(key);
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    // Ensure required properties exist for legacy reports
+                    if (!parsed.meta) parsed.meta = {};
+                    if (!parsed.meta.naMarked) parsed.meta.naMarked = {};
+                    if (!parsed.safety) parsed.safety = { hasIncidents: false, noIncidents: false, notes: [] };
+                    if (!parsed.refinedData) parsed.refinedData = {};
+                    return parsed;
+                } catch (e) {}
             }
-            const saved = localStorage.getItem(getTodayKey());
-            if (saved) { try { return JSON.parse(saved); } catch (e) {} }
+
+            // Fallback to legacy key
             const legacy = localStorage.getItem('fieldvoice_report');
-            if (legacy) { try { return JSON.parse(legacy); } catch (e) {} }
-            return null;
+            if (legacy) {
+                try {
+                    const parsed = JSON.parse(legacy);
+                    // Ensure required properties exist for legacy reports
+                    if (!parsed.meta) parsed.meta = {};
+                    if (!parsed.meta.naMarked) parsed.meta.naMarked = {};
+                    if (!parsed.safety) parsed.safety = { hasIncidents: false, noIncidents: false, notes: [] };
+                    if (!parsed.refinedData) parsed.refinedData = {};
+                    return parsed;
+                } catch (e) {}
+            }
+
+            return getInitialReport();
         }
 
+        function getInitialReport() {
+            return {
+                overview: {
+                    projectName: "North-South Connector Road Phase 2",
+                    noabProjectNo: "1291",
+                    cnoSolicitationNo: "N/A",
+                    noticeToProceed: "June 27th, 2025",
+                    contractDuration: "467 days",
+                    expectedCompletion: "October 7th, 2026",
+                    contractDayNo: "-- of 467 days",
+                    weatherDays: "0 days",
+                    date: new Date().toLocaleDateString(),
+                    location: "Louis Armstrong New Orleans Int'l Airport",
+                    engineer: "Garver, LLC",
+                    contractor: "Hunt, Gibbs, Boh, & Metro (HGBM)",
+                    startTime: "6:00 AM",
+                    endTime: "4:00 PM",
+                    shiftDuration: "10.00 hours",
+                    completedBy: "Inspector Name, RPR",
+                    weather: {
+                        highTemp: "--",
+                        lowTemp: "--",
+                        precipitation: "0.00\"",
+                        generalCondition: "--",
+                        jobSiteCondition: "Dry",
+                        adverseConditions: "N/A",
+                    },
+                },
+                contractors: [],
+                activities: [],
+                operations: [],
+                equipment: [],
+                generalIssues: [],
+                communications: [],
+                qaqcNotes: [],
+                safety: { hasIncidents: false, notes: [] },
+                visitorsRemarks: [],
+                photos: [],
+            };
+        }
+
+        // ============ RENDER REPORT ============
         function renderReport() {
             const report = getReport();
-            if (!report) {
-                document.body.innerHTML = `
-                    <div class="min-h-screen flex items-center justify-center bg-slate-100">
-                        <div class="text-center p-8">
-                            <i class="fas fa-file-excel text-6xl text-slate-300 mb-4"></i>
-                            <h1 class="text-xl font-bold text-slate-700">No Report Found</h1>
-                            <p class="text-slate-500 mt-2">Start a new report from the dashboard.</p>
-                            <a href="index.html" class="inline-block mt-4 px-6 py-3 bg-dot-navy text-white font-bold uppercase hover:bg-dot-blue transition-colors">
-                                <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
-                            </a>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-
-            const o = report.overview || {};
+            const o = report.overview;
             const w = o.weather || {};
 
-            const dateStr = o.date ? new Date(o.date).toISOString().split('T')[0].replace(/-/g, '') : 'XXXXXX';
-            document.getElementById('reportDocNo').textContent = `RPR-${dateStr}`;
+            // Update document title
+            document.title = `Daily Report - ${o.date} - FieldVoice Pro`;
+            document.getElementById('reportDate').textContent = o.date;
 
-            document.getElementById('projectName').textContent = o.projectName || 'N/A';
-            document.getElementById('reportDate').textContent = o.date || 'N/A';
-            document.getElementById('noabProjectNo').textContent = o.noabProjectNo || '1291';
-            document.getElementById('contractDay').textContent = o.contractDayNo || 'N/A';
-            document.getElementById('contractor').textContent = o.contractor || 'Hunt, Gibbs, Boh, & Metro (HGBM)';
-            document.getElementById('location').textContent = o.location || 'Louis Armstrong New Orleans Int\'l Airport';
+            // Page 1: Overview Grid
+            document.getElementById('overviewGrid').innerHTML = `
+                <div class="border-r border-b border-slate-900 p-2">
+                    <span class="font-black text-slate-600">PROJECT NAME:</span><br>
+                    <span class="font-bold">${o.projectName}</span>
+                </div>
+                <div class="border-b border-slate-900 p-2">
+                    <span class="font-black text-slate-600">DATE:</span><br>
+                    <span class="font-bold">${o.date}</span>
+                </div>
 
-            document.getElementById('weatherCondition').textContent = w.generalCondition || 'N/A';
-            document.getElementById('weatherHigh').textContent = w.highTemp || 'N/A';
-            document.getElementById('weatherLow').textContent = w.lowTemp || 'N/A';
-            document.getElementById('weatherPrecip').textContent = w.precipitation || '0.00"';
-            document.getElementById('siteConditions').textContent = w.jobSiteCondition || 'N/A';
+                <div class="border-r border-b border-slate-900 p-2">
+                    <span class="font-black text-slate-600">NOAB PROJECT NO:</span><br>
+                    <span class="font-bold">${o.noabProjectNo}</span>
+                </div>
+                <div class="border-b border-slate-900 p-2">
+                    <span class="font-black text-slate-600">LOCATION:</span><br>
+                    <span class="font-bold">${o.location}</span>
+                </div>
 
-            document.getElementById('startTime').textContent = o.startTime || 'N/A';
-            document.getElementById('endTime').textContent = o.endTime || 'N/A';
-            document.getElementById('duration').textContent = o.shiftDuration || 'N/A';
+                <div class="border-r border-b border-slate-900 p-2">
+                    <span class="font-black text-slate-600">NOTICE TO PROCEED:</span><br>
+                    <span class="font-bold">${o.noticeToProceed}</span>
+                </div>
+                <div class="border-b border-slate-900 p-2">
+                    <span class="font-black text-slate-600">ENGINEER:</span><br>
+                    <span class="font-bold">${o.engineer}</span>
+                </div>
 
-            const contractors = report.contractors || [];
-            if (contractors.length > 0) {
-                document.getElementById('contractorsList').innerHTML = contractors.map(c =>
-                    `<span class="px-4 py-2 bg-dot-orange text-white font-bold text-sm">${c}</span>`
-                ).join('');
+                <div class="border-r border-b border-slate-900 p-2">
+                    <span class="font-black text-slate-600">CONTRACT DURATION:</span><br>
+                    <span class="font-bold">${o.contractDuration}</span>
+                </div>
+                <div class="border-b border-slate-900 p-2">
+                    <span class="font-black text-slate-600">PRIME CONTRACTOR:</span><br>
+                    <span class="font-bold">${o.contractor}</span>
+                </div>
+
+                <div class="border-r border-b border-slate-900 p-2">
+                    <span class="font-black text-slate-600">CONTRACT DAY NO:</span><br>
+                    <span class="font-bold">${o.contractDayNo}</span>
+                </div>
+                <div class="border-b border-slate-900 p-2">
+                    <span class="font-black text-slate-600">SHIFT HOURS:</span><br>
+                    <span class="font-bold">${o.startTime || '--'} - ${o.endTime || '--'} (${o.shiftDuration || '--'})</span>
+                </div>
+
+                <div class="border-r border-slate-900 p-2">
+                    <span class="font-black text-slate-600">WEATHER CONDITIONS:</span><br>
+                    <div class="grid grid-cols-2 gap-1 mt-1">
+                        <span>High: <strong>${w.highTemp || '--'}</strong></span>
+                        <span>Low: <strong>${w.lowTemp || '--'}</strong></span>
+                        <span>Precip: <strong>${w.precipitation || '--'}</strong></span>
+                        <span>Condition: <strong>${w.generalCondition || '--'}</strong></span>
+                    </div>
+                    <div class="mt-1">
+                        <span>Site Condition: <strong class="${w.jobSiteCondition === 'Wet' ? 'text-blue-600' : 'text-emerald-600'}">${w.jobSiteCondition || 'Dry'}</strong></span>
+                    </div>
+                </div>
+                <div class="p-2 flex flex-col justify-between">
+                    <div>
+                        <span class="font-black text-slate-600">COMPLETED BY:</span>
+                    </div>
+                    <div class="text-right mt-2">
+                        <div class="border-b border-slate-900 w-full mb-1 pb-1 text-center italic font-serif text-base">${o.completedBy}</div>
+                        <div class="text-[8px] font-black text-slate-500 uppercase">RPR Name & Title</div>
+                    </div>
+                </div>
+            `;
+
+            // Page 1: Work Summary - check for refined data first
+            const workSummary = document.getElementById('workSummary');
+            const refinedActivities = report.refinedData?.activities;
+
+            if (refinedActivities) {
+                // Use refined text if available
+                workSummary.innerHTML = `
+                    <p class="font-bold text-slate-700 mb-3">Construction Activities Performed and Observed on this Date:</p>
+                    <div class="mb-4 pb-3">
+                        <p class="text-slate-700 leading-relaxed">${refinedActivities.replace(/\n/g, '<br>')}</p>
+                    </div>
+                `;
+            } else if (report.activities.length === 0) {
+                workSummary.innerHTML = `
+                    <p class="font-bold text-slate-700 mb-2">Construction Activities Performed and Observed on this Date:</p>
+                    <p class="italic text-slate-400">No work summary recorded for today.</p>
+                `;
+            } else {
+                workSummary.innerHTML = `
+                    <p class="font-bold text-slate-700 mb-3">Construction Activities Performed and Observed on this Date:</p>
+                    ${report.activities.map(act => `
+                        <div class="mb-4 pb-3 border-b border-slate-100 last:border-0">
+                            <p class="font-black uppercase text-emerald-800 mb-1">${act.contractor} – ${act.trade || 'GENERAL CONTRACTOR'}</p>
+                            <p class="text-slate-700 leading-relaxed">${act.narrative || 'Work performed - details not recorded.'}</p>
+                            ${act.equipmentSummary ? `<p class="mt-1"><span class="font-bold text-slate-600">EQUIPMENT:</span> ${act.equipmentSummary}</p>` : ''}
+                            ${act.crewSummary ? `<p class="mt-1"><span class="font-bold text-slate-600">CREW:</span> ${act.crewSummary}</p>` : ''}
+                        </div>
+                    `).join('')}
+                `;
             }
 
-            const activities = report.activities || [];
-            if (activities.length > 0) {
-                document.getElementById('activitiesList').innerHTML = activities.map(a => `
-                    <div class="p-4 bg-slate-50 border-l-4 border-safety-green">
-                        <p class="text-xs font-bold text-safety-green uppercase mb-1">${a.contractor || 'General'}</p>
-                        <p class="text-sm text-slate-700">${a.narrative}</p>
+            // Page 2: Operations Table
+            const operationsBody = document.getElementById('operationsBody');
+            const operationsFoot = document.getElementById('operationsFoot');
+
+            if (report.operations.length > 0) {
+                let totals = { supers: 0, foreman: 0, operators: 0, laborers: 0, others: 0, total: 0 };
+
+                operationsBody.innerHTML = report.operations.map(row => {
+                    const s = parseInt(row.supers) || 0;
+                    const f = parseInt(row.foreman) || 0;
+                    const op = parseInt(row.operators) || 0;
+                    const l = parseInt(row.laborers) || 0;
+                    const ot = parseInt(row.others) || 0;
+                    const rowTotal = s + f + op + l + ot;
+
+                    totals.supers += s;
+                    totals.foreman += f;
+                    totals.operators += op;
+                    totals.laborers += l;
+                    totals.others += ot;
+                    totals.total += rowTotal;
+
+                    return `
+                        <tr>
+                            <td class="border border-slate-900 p-1.5 font-bold">${row.contractor}</td>
+                            <td class="border border-slate-900 p-1.5">${row.trade || 'General'}</td>
+                            <td class="border border-slate-900 p-1.5 text-center">${s || '-'}</td>
+                            <td class="border border-slate-900 p-1.5 text-center">${f || '-'}</td>
+                            <td class="border border-slate-900 p-1.5 text-center">${op || '-'}</td>
+                            <td class="border border-slate-900 p-1.5 text-center">${l || '-'}</td>
+                            <td class="border border-slate-900 p-1.5 text-center">${ot || '-'}</td>
+                            <td class="border border-slate-900 p-1.5 text-center font-bold bg-emerald-50">${rowTotal}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                operationsFoot.innerHTML = `
+                    <tr>
+                        <td colspan="2" class="border border-slate-900 p-1.5 text-right font-black">DAILY TOTALS:</td>
+                        <td class="border border-slate-900 p-1.5 text-center font-bold">${totals.supers || '-'}</td>
+                        <td class="border border-slate-900 p-1.5 text-center font-bold">${totals.foreman || '-'}</td>
+                        <td class="border border-slate-900 p-1.5 text-center font-bold">${totals.operators || '-'}</td>
+                        <td class="border border-slate-900 p-1.5 text-center font-bold">${totals.laborers || '-'}</td>
+                        <td class="border border-slate-900 p-1.5 text-center font-bold">${totals.others || '-'}</td>
+                        <td class="border border-slate-900 p-1.5 text-center font-black text-lg bg-emerald-100">${totals.total}</td>
+                    </tr>
+                `;
+            } else {
+                operationsBody.innerHTML = '<tr><td colspan="8" class="border border-slate-900 p-3 text-center italic text-slate-400">No personnel recorded for this date.</td></tr>';
+                operationsFoot.innerHTML = '';
+            }
+
+            // Page 2: Equipment Table
+            const equipmentBody = document.getElementById('equipmentBody');
+            equipmentBody.innerHTML = report.equipment.length > 0
+                ? report.equipment.map(row => `
+                    <tr>
+                        <td class="border border-slate-900 p-1.5 font-bold">${row.contractor}</td>
+                        <td class="border border-slate-900 p-1.5">${row.model}</td>
+                        <td class="border border-slate-900 p-1.5 text-center font-bold">${row.quantity}</td>
+                        <td class="border border-slate-900 p-1.5 text-slate-600">${row.notes || 'Active'}</td>
+                    </tr>
+                `).join('')
+                : '<tr><td colspan="4" class="border border-slate-900 p-3 text-center italic text-slate-400">No equipment mobilized or recorded.</td></tr>';
+
+            // Page 3: Issues - check for refined data first
+            const issuesSection = document.getElementById('issuesSection');
+            const refinedIssues = report.refinedData?.issues;
+            const naMarked = report.meta?.naMarked || {};
+
+            if (naMarked.issues) {
+                issuesSection.innerHTML = '<p class="italic text-slate-400">N/A - No issues reported.</p>';
+            } else if (refinedIssues) {
+                issuesSection.innerHTML = `<p class="text-slate-700">${refinedIssues.replace(/\n/g, '<br>')}</p>`;
+            } else if (report.generalIssues.length > 0) {
+                issuesSection.innerHTML = `<ul class="list-disc list-inside space-y-1">${report.generalIssues.map(issue => `<li>${issue}</li>`).join('')}</ul>`;
+            } else {
+                issuesSection.innerHTML = '<p class="italic text-slate-400">No issues, delays, or RFIs reported.</p>';
+            }
+
+            // Page 3: Visitors - check for refined data first
+            const visitorsSection = document.getElementById('visitorsSection');
+            const refinedVisitors = report.refinedData?.visitors;
+
+            if (naMarked.visitors) {
+                visitorsSection.innerHTML = '<p class="italic text-slate-400">N/A - No visitors.</p>';
+            } else if (refinedVisitors) {
+                visitorsSection.innerHTML = `<p class="text-slate-700">${refinedVisitors.replace(/\n/g, '<br>')}</p>`;
+            } else {
+                const visitorsContent = [
+                    ...(report.visitorsRemarks || []),
+                    ...(report.communications || [])
+                ];
+                visitorsSection.innerHTML = visitorsContent.length > 0
+                    ? `<ul class="list-disc list-inside space-y-1">${visitorsContent.map(v => `<li>${v}</li>`).join('')}</ul>`
+                    : '<p class="italic text-slate-400">No visitors or significant communications recorded.</p>';
+            }
+
+            // Page 3: QA/QC - check for refined data first
+            const qaqcSection = document.getElementById('qaqcSection');
+            const refinedInspections = report.refinedData?.inspections;
+
+            if (naMarked.inspections) {
+                qaqcSection.innerHTML = '<p class="italic text-slate-400">N/A - No inspections.</p>';
+            } else if (refinedInspections) {
+                qaqcSection.innerHTML = `<p class="text-slate-700">${refinedInspections.replace(/\n/g, '<br>')}</p>`;
+            } else if (report.qaqcNotes.length > 0) {
+                qaqcSection.innerHTML = `<ul class="list-disc list-inside space-y-1">${report.qaqcNotes.map(note => `<li>${note}</li>`).join('')}</ul>`;
+            } else {
+                qaqcSection.innerHTML = '<p class="italic text-slate-400">No QA/QC inspections or testing recorded.</p>';
+            }
+
+            // Page 3: Safety - check for refined data first
+            const safetySection = document.getElementById('safetySection');
+            const refinedSafety = report.refinedData?.safety;
+            const safety = report.safety || { hasIncidents: false, notes: [] };
+
+            safetySection.innerHTML = `
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${safety.hasIncidents ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}">
+                        <i class="fas ${safety.hasIncidents ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i>
+                        ${safety.hasIncidents ? 'Incidents Reported' : 'No Incidents'}
+                    </span>
+                </div>
+                ${refinedSafety
+                    ? `<p class="text-slate-700">${refinedSafety.replace(/\n/g, '<br>')}</p>`
+                    : (safety.notes && safety.notes.length > 0
+                        ? `<ul class="list-disc list-inside space-y-1">${safety.notes.map(note => `<li>${note}</li>`).join('')}</ul>`
+                        : '<p class="italic text-slate-400">No additional safety notes.</p>'
+                    )
+                }
+            `;
+
+            // Signature line
+            document.getElementById('signatureLine').querySelector('span').textContent = o.completedBy;
+
+            // Page 4: Photos (conditional)
+            const page4 = document.getElementById('page4');
+            const photosGrid = document.getElementById('photosGrid');
+
+            if (report.photos && report.photos.length > 0) {
+                page4.classList.remove('hidden');
+                photosGrid.innerHTML = report.photos.map(p => `
+                    <div class="border border-slate-300 rounded overflow-hidden">
+                        <img src="${p.url}" class="w-full h-40 object-cover" alt="${p.caption || 'Site photo'}">
+                        <div class="p-2 bg-slate-50 text-[9px]">
+                            <div class="flex justify-between items-start mb-1">
+                                <span class="font-bold text-slate-600">${p.date || '--'}</span>
+                                <span class="text-slate-400">${p.time || ''}</span>
+                            </div>
+                            <p class="text-slate-700">${p.caption || 'No caption provided.'}</p>
+                            ${p.gps ? `<p class="text-slate-400 mt-1 text-[8px]"><i class="fas fa-map-marker-alt mr-1"></i>${p.gps.lat.toFixed(5)}, ${p.gps.lng.toFixed(5)}</p>` : ''}
+                        </div>
                     </div>
                 `).join('');
-            }
 
-            const operations = report.operations || [];
-            if (operations.length > 0) {
-                let totalWorkers = 0;
-                const rows = operations.map(op => {
-                    const total = (op.supers || 0) + (op.foreman || 0) + (op.operators || 0) + (op.laborers || 0) + (op.others || 0);
-                    totalWorkers += total;
-                    return `<tr class="border-b border-slate-200"><td class="py-2 px-3 font-bold text-slate-800">${op.contractor}</td><td class="py-2 px-3 text-center">${op.supers || 0}</td><td class="py-2 px-3 text-center">${op.foreman || 0}</td><td class="py-2 px-3 text-center">${op.operators || 0}</td><td class="py-2 px-3 text-center">${op.laborers || 0}</td><td class="py-2 px-3 text-center font-bold text-dot-blue">${total}</td></tr>`;
-                }).join('');
-                document.getElementById('personnelTable').innerHTML = `<table class="w-full text-sm"><thead><tr class="bg-dot-navy text-white"><th class="py-2 px-3 text-left font-bold uppercase text-xs">Contractor</th><th class="py-2 px-3 text-center font-bold uppercase text-xs">Supers</th><th class="py-2 px-3 text-center font-bold uppercase text-xs">Foreman</th><th class="py-2 px-3 text-center font-bold uppercase text-xs">Operators</th><th class="py-2 px-3 text-center font-bold uppercase text-xs">Laborers</th><th class="py-2 px-3 text-center font-bold uppercase text-xs">Total</th></tr></thead><tbody>${rows}</tbody><tfoot><tr class="bg-safety-green/10 border-t-2 border-safety-green"><td class="py-2 px-3 font-bold text-safety-green uppercase" colspan="5">Total Personnel</td><td class="py-2 px-3 text-center font-bold text-safety-green text-lg">${totalWorkers}</td></tr></tfoot></table>`;
-            }
-
-            const equipment = report.equipment || [];
-            if (equipment.length > 0) {
-                document.getElementById('equipmentList').innerHTML = equipment.map(e => `<div class="flex items-center justify-between p-3 bg-dot-yellow/10 border border-dot-yellow"><span class="font-bold text-slate-800">${e.model}</span><span class="text-sm text-slate-600">${e.contractor} • Qty: ${e.quantity}</span></div>`).join('');
-            }
-
-            const issues = report.generalIssues || [];
-            const naMarked = report.meta?.naMarked || {};
-            if (naMarked.issues) {
-                document.getElementById('issuesList').innerHTML = `<div class="p-4 bg-safety-green/10 border-2 border-safety-green text-center"><i class="fas fa-check-circle text-safety-green mr-2"></i><span class="font-bold text-safety-green uppercase">No Issues Reported</span></div>`;
-            } else if (issues.length > 0) {
-                document.getElementById('issuesList').innerHTML = issues.map(issue => `<div class="flex items-start gap-3 p-4 bg-red-50 border-l-4 border-red-500"><i class="fas fa-exclamation-circle text-red-500 mt-0.5"></i><p class="text-sm text-slate-700">${issue}</p></div>`).join('');
-            }
-
-            const inspections = report.qaqcNotes || [];
-            if (naMarked.inspections) {
-                document.getElementById('inspectionsList').innerHTML = `<div class="p-4 bg-slate-100 border border-slate-300 text-center"><span class="text-slate-500 uppercase">N/A - No Inspections Today</span></div>`;
-            } else if (inspections.length > 0) {
-                document.getElementById('inspectionsList').innerHTML = inspections.map(note => `<div class="flex items-start gap-3 p-4 bg-violet-50 border-l-4 border-violet-500"><i class="fas fa-check-circle text-violet-500 mt-0.5"></i><p class="text-sm text-slate-700">${note}</p></div>`).join('');
-            }
-
-            const safety = report.safety || {};
-            if (safety.hasIncidents) {
-                document.getElementById('safetyStatus').innerHTML = `<div class="p-4 bg-red-600 text-white text-center"><i class="fas fa-exclamation-triangle mr-2"></i><span class="font-bold uppercase">Safety Incident Reported</span></div>`;
+                // Update page counts
+                document.getElementById('totalPages').textContent = '4';
+                document.querySelectorAll('.totalPages').forEach(el => el.textContent = '4');
             } else {
-                document.getElementById('safetyStatus').innerHTML = `<div class="p-4 bg-safety-green text-white text-center"><i class="fas fa-shield-alt mr-2"></i><span class="font-bold uppercase">No Safety Incidents</span></div>`;
+                page4.classList.add('hidden');
+                document.getElementById('totalPages').textContent = '3';
+                document.querySelectorAll('.totalPages').forEach(el => el.textContent = '3');
             }
-            if (safety.notes && safety.notes.length > 0) {
-                document.getElementById('safetyNotes').innerHTML = safety.notes.map(note => `<div class="flex items-start gap-3 p-4 bg-green-50 border-l-4 border-safety-green"><i class="fas fa-shield-alt text-safety-green mt-0.5"></i><p class="text-sm text-slate-700">${note}</p></div>`).join('');
-            }
-
-            const visitors = report.visitorsRemarks || [];
-            if (naMarked.visitors) {
-                document.getElementById('visitorsList').innerHTML = `<div class="p-4 bg-slate-100 border border-slate-300 text-center"><span class="text-slate-500 uppercase">N/A - No Visitors Today</span></div>`;
-            } else if (visitors.length > 0) {
-                document.getElementById('visitorsList').innerHTML = visitors.map(v => `<div class="flex items-start gap-3 p-4 bg-slate-50 border-l-4 border-dot-blue"><i class="fas fa-user text-dot-blue mt-0.5"></i><p class="text-sm text-slate-700">${v}</p></div>`).join('');
-            }
-
-            const photos = report.photos || [];
-            if (photos.length > 0) {
-                document.getElementById('photosPage').classList.remove('hidden');
-                document.getElementById('photosGrid').innerHTML = photos.map(p => `<div class="border border-slate-200 overflow-hidden"><img src="${p.url}" class="w-full h-48 object-cover"><div class="p-3 bg-slate-50"><p class="text-xs text-slate-500">${p.time || ''} • ${p.date || ''}</p>${p.gps ? `<p class="text-[10px] text-slate-400 mt-1"><i class="fas fa-map-marker-alt mr-1"></i>${p.gps.lat?.toFixed(5)}, ${p.gps.lng?.toFixed(5)}</p>` : ''}</div></div>`).join('');
-            }
-
-            document.getElementById('preparedBy').textContent = o.completedBy || 'Inspector Name, RPR';
-            document.getElementById('signatureDate').textContent = o.date || new Date().toLocaleDateString();
         }
 
-        function exportReport() {
-            const report = getReport();
-            if (!report) return;
-            const dataStr = JSON.stringify(report, null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `RPR_Report_${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
+        // ============ INIT ============
         document.addEventListener('DOMContentLoaded', renderReport);
     </script>
 </body>
