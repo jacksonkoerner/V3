@@ -288,7 +288,10 @@
                 </button>
                 <div class="section-content">
                     <div class="px-4 pb-4 space-y-3 border-t border-slate-200 pt-4">
-                        <label class="block cursor-pointer">
+                        <button onclick="markNA('photos')" id="photos-na-btn" class="w-full p-3 bg-slate-100 border border-slate-300 text-slate-600 hover:bg-slate-200 transition-colors text-sm font-medium uppercase">
+                            <i class="fas fa-ban mr-2"></i>No Photos - Mark as N/A
+                        </button>
+                        <label class="block cursor-pointer" id="photos-upload-label">
                             <input type="file" accept="image/*" capture="environment" multiple class="hidden" id="photoInput">
                             <div class="border-2 border-dashed border-slate-300 p-6 text-center hover:border-dot-blue hover:bg-slate-50 transition-colors">
                                 <i class="fas fa-camera text-2xl text-slate-400 mb-2"></i>
@@ -698,7 +701,7 @@
             document.getElementById('inspections-preview').textContent = naMarked.inspections ? 'N/A - No inspections' : report.qaqcNotes.length > 0 ? `${report.qaqcNotes.length} inspections` : 'None reported';
             document.getElementById('safety-preview').textContent = report.safety.hasIncidents ? 'INCIDENT REPORTED' : report.safety.noIncidents ? 'No incidents (confirmed)' : report.safety.notes.length > 0 ? 'Notes added' : 'Tap to confirm';
             document.getElementById('visitors-preview').textContent = naMarked.visitors ? 'N/A - No visitors' : report.visitorsRemarks.length > 0 ? `${report.visitorsRemarks.length} entries` : 'None reported';
-            document.getElementById('photos-preview').textContent = report.photos.length > 0 ? `${report.photos.length} photos` : 'No photos';
+            document.getElementById('photos-preview').textContent = naMarked.photos ? 'N/A - No photos' : report.photos.length > 0 ? `${report.photos.length} photos` : 'No photos';
             updateStatusIcons();
         }
 
@@ -711,7 +714,7 @@
                 'inspections': report.qaqcNotes.length > 0 || naMarked.inspections,
                 'safety': report.safety.noIncidents || report.safety.hasIncidents || report.safety.notes.length > 0,
                 'visitors': report.visitorsRemarks.length > 0 || naMarked.visitors,
-                'photos': report.photos.length > 0
+                'photos': report.photos.length > 0 || naMarked.photos
             };
             Object.entries(sections).forEach(([section, hasData]) => {
                 const statusEl = document.getElementById(`${section}-status`);
@@ -729,12 +732,31 @@
         }
 
         function updateProgress() {
+            const naMarked = report.meta.naMarked || {};
             let filled = 0;
-            let total = 4;
+            let total = 7; // weather, activities, issues, inspections, safety, visitors, photos
+
+            // Weather - has site condition text
             if (report.overview.weather.jobSiteCondition) filled++;
+
+            // Activities - has at least one activity
             if (report.activities.length > 0) filled++;
-            if (report.generalIssues.length > 0 || (report.meta.naMarked && report.meta.naMarked.issues)) filled++;
-            if (report.safety.notes.length > 0 || report.safety.hasIncidents !== undefined) filled++;
+
+            // Issues - has issues OR marked N/A
+            if (report.generalIssues.length > 0 || naMarked.issues) filled++;
+
+            // Inspections - has inspections OR marked N/A
+            if (report.qaqcNotes.length > 0 || naMarked.inspections) filled++;
+
+            // Safety - confirmed no incidents OR has incidents OR has notes
+            if (report.safety.noIncidents === true || report.safety.hasIncidents === true || report.safety.notes.length > 0) filled++;
+
+            // Visitors - has visitors OR marked N/A
+            if (report.visitorsRemarks.length > 0 || naMarked.visitors) filled++;
+
+            // Photos - has photos OR marked N/A
+            if (report.photos.length > 0 || naMarked.photos) filled++;
+
             const percent = Math.round((filled / total) * 100);
             document.getElementById('progressBar').style.width = `${percent}%`;
             document.getElementById('progressText').textContent = `${percent}%`;
@@ -750,6 +772,11 @@
                 btn.className = 'w-full p-3 bg-safety-green/20 border-2 border-safety-green text-safety-green text-sm font-medium uppercase cursor-default';
                 btn.onclick = () => clearNA(section);
             }
+            // Hide photo upload if photos section is marked N/A
+            if (section === 'photos') {
+                const uploadLabel = document.getElementById('photos-upload-label');
+                if (uploadLabel) uploadLabel.classList.add('hidden');
+            }
             saveReport();
             updateAllPreviews();
             showToast('Marked as N/A');
@@ -759,10 +786,15 @@
             if (report.meta.naMarked) { delete report.meta.naMarked[section]; }
             const btn = document.getElementById(`${section}-na-btn`);
             if (btn) {
-                const labels = { issues: 'No Issues - Mark as N/A', inspections: 'No Inspections - Mark as N/A', visitors: 'No Visitors - Mark as N/A' };
+                const labels = { issues: 'No Issues - Mark as N/A', inspections: 'No Inspections - Mark as N/A', visitors: 'No Visitors - Mark as N/A', photos: 'No Photos - Mark as N/A' };
                 btn.innerHTML = `<i class="fas fa-ban mr-2"></i>${labels[section] || 'Mark as N/A'}`;
                 btn.className = 'w-full p-3 bg-slate-100 border border-slate-300 text-slate-600 hover:bg-slate-200 transition-colors text-sm font-medium uppercase';
                 btn.onclick = () => markNA(section);
+            }
+            // Show photo upload if photos section is cleared
+            if (section === 'photos') {
+                const uploadLabel = document.getElementById('photos-upload-label');
+                if (uploadLabel) uploadLabel.classList.remove('hidden');
             }
             saveReport();
             updateAllPreviews();
@@ -778,6 +810,11 @@
                         btn.innerHTML = '<i class="fas fa-check mr-2"></i>Marked as N/A';
                         btn.className = 'w-full p-3 bg-safety-green/20 border-2 border-safety-green text-safety-green text-sm font-medium uppercase cursor-default';
                         btn.onclick = () => clearNA(section);
+                    }
+                    // Hide photo upload if photos is marked N/A
+                    if (section === 'photos') {
+                        const uploadLabel = document.getElementById('photos-upload-label');
+                        if (uploadLabel) uploadLabel.classList.add('hidden');
                     }
                 }
             });
