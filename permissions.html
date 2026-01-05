@@ -139,6 +139,63 @@
                         <p class="text-xs text-violet-600 uppercase font-bold mb-2">Say something...</p>
                         <p id="speechTranscript" class="text-sm text-slate-700 italic min-h-[40px]">Listening...</p>
                     </div>
+
+                    <!-- iOS Help Panel -->
+                    <div id="iosHelpPanel" class="hidden mt-4 bg-red-50 border-2 border-red-200">
+                        <div class="p-3 bg-red-100 border-b border-red-200">
+                            <p class="text-sm font-bold text-red-700 uppercase flex items-center gap-2">
+                                <i class="fab fa-apple"></i> iOS Safari - Siri & Dictation Required
+                            </p>
+                        </div>
+                        <div class="p-4 space-y-4">
+                            <p class="text-xs text-red-600">
+                                iOS Safari uses Apple's Siri servers for speech recognition. You must enable <strong>Siri</strong> and <strong>Dictation</strong> in your device settings.
+                            </p>
+
+                            <div class="space-y-3">
+                                <div class="bg-white p-3 border border-red-200">
+                                    <p class="text-xs font-bold text-slate-700 uppercase mb-2">Step 1: Enable Siri</p>
+                                    <ol class="text-xs text-slate-600 space-y-1 list-decimal list-inside">
+                                        <li>Open <strong>Settings</strong> app</li>
+                                        <li>Tap <strong>Siri & Search</strong> (or <strong>Siri</strong>)</li>
+                                        <li>Enable <strong>"Listen for 'Hey Siri'"</strong> OR <strong>"Press Side Button for Siri"</strong></li>
+                                        <li>Follow setup prompts if asked</li>
+                                    </ol>
+                                </div>
+
+                                <div class="bg-white p-3 border border-red-200">
+                                    <p class="text-xs font-bold text-slate-700 uppercase mb-2">Step 2: Enable Dictation</p>
+                                    <ol class="text-xs text-slate-600 space-y-1 list-decimal list-inside">
+                                        <li>Open <strong>Settings</strong> app</li>
+                                        <li>Tap <strong>General</strong></li>
+                                        <li>Tap <strong>Keyboard</strong></li>
+                                        <li>Scroll down and enable <strong>"Enable Dictation"</strong></li>
+                                        <li>Confirm when prompted</li>
+                                    </ol>
+                                </div>
+
+                                <div class="bg-white p-3 border border-red-200">
+                                    <p class="text-xs font-bold text-slate-700 uppercase mb-2">Step 3: Reload & Test</p>
+                                    <ol class="text-xs text-slate-600 space-y-1 list-decimal list-inside">
+                                        <li>Close Safari completely (swipe up from app switcher)</li>
+                                        <li>Reopen Safari and navigate back to this page</li>
+                                        <li>Tap "Test" on Speech Recognition again</li>
+                                    </ol>
+                                </div>
+                            </div>
+
+                            <div class="bg-yellow-50 border border-yellow-300 p-3">
+                                <p class="text-xs text-yellow-700">
+                                    <i class="fas fa-lightbulb mr-1"></i>
+                                    <strong>Still not working?</strong> Check Settings > Privacy & Security > Speech Recognition and ensure it's enabled for Safari.
+                                </p>
+                            </div>
+
+                            <button onclick="testSpeechRecognition()" class="w-full px-4 py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase transition-colors">
+                                <i class="fas fa-redo mr-2"></i>Try Speech Recognition Again
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -312,7 +369,7 @@
             'audio-capture': { code: 'SPE_003', message: 'Audio capture failed', fix: 'Check microphone permissions' },
             'network': { code: 'SPE_004', message: 'Network error for speech service', fix: 'Check internet connection' },
             'not-allowed': { code: 'SPE_005', message: 'Speech recognition not allowed', fix: 'Enable microphone permission and reload page' },
-            'service-not-allowed': { code: 'SPE_006', message: 'Speech service not allowed by browser', fix: 'iOS: Ensure Settings > Safari > Microphone is enabled for this site' },
+            'service-not-allowed': { code: 'SPE_006', message: 'Speech service blocked by iOS', fix: 'Enable Siri & Dictation in iOS Settings (see instructions below)' },
             'bad-grammar': { code: 'SPE_007', message: 'Speech grammar error', fix: 'Try again' },
             'language-not-supported': { code: 'SPE_008', message: 'Language not supported', fix: 'Change device language to English' },
 
@@ -626,8 +683,18 @@
             recognition.onerror = (event) => {
                 clearTimeout(timeout);
                 log(`Speech recognition error: ${event.error}`, 'error');
+
+                // Additional debugging for iOS
+                if (isIOS) {
+                    log(`iOS version detected from UA`, 'info');
+                    if (event.error === 'service-not-allowed') {
+                        log('SPE_006: This error means Siri/Dictation is not enabled on this iOS device', 'error');
+                        log('User needs to: 1) Enable Siri in Settings, 2) Enable Dictation in Keyboard settings', 'warn');
+                    }
+                }
+
                 const errInfo = getErrorInfo({ error: event.error });
-                showSpeechError(errInfo.code, errInfo.message, errInfo.fix);
+                showSpeechError(errInfo.code, errInfo.message, errInfo.fix, event.error);
                 testArea.classList.add('hidden');
             };
 
@@ -639,12 +706,13 @@
             }
         }
 
-        function showSpeechError(code, message, fix) {
+        function showSpeechError(code, message, fix, errorType = '') {
             const card = document.getElementById('speechCard');
             const btn = document.getElementById('speechBtn');
             const icon = document.getElementById('speechIcon');
             const status = document.getElementById('speechStatus');
             const errorEl = document.getElementById('speechError');
+            const iosHelpPanel = document.getElementById('iosHelpPanel');
 
             card.className = 'permission-card bg-white border-2 error';
             icon.className = 'fas fa-comment-slash text-red-500 text-xl';
@@ -655,6 +723,15 @@
             status.className = 'text-sm text-red-500 mt-1';
             errorEl.innerHTML = `<strong>${code}</strong>: ${fix}`;
             errorEl.classList.remove('hidden');
+
+            // Show iOS help panel for service-not-allowed errors on iOS
+            if ((code === 'SPE_006' || errorType === 'service-not-allowed') && isIOS) {
+                iosHelpPanel.classList.remove('hidden');
+                log('Showing iOS Siri/Dictation help panel', 'info');
+            } else {
+                iosHelpPanel.classList.add('hidden');
+            }
+
             updateSummary();
         }
 
