@@ -3,414 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Settings - FieldVoice Pro</title>
+    <title>Project Configuration</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .gradient-bg {
-            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dot-navy': '#0a1628',
+                        'dot-blue': '#1e3a5f',
+                        'dot-slate': '#334155',
+                        'dot-orange': '#ea580c',
+                        'dot-yellow': '#f59e0b',
+                        'safety-green': '#16a34a',
+                    }
+                }
+            }
         }
+    </script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+        .header-stripe { background: repeating-linear-gradient(-45deg, #f59e0b, #f59e0b 10px, #0a1628 10px, #0a1628 20px); height: 4px; }
     </style>
 </head>
-<body class="gradient-bg min-h-screen text-white">
-    <div id="app" class="max-w-lg mx-auto min-h-screen flex flex-col">
+<body class="bg-slate-100 min-h-screen">
+    <div class="header-stripe"></div>
+
+    <div class="max-w-lg mx-auto min-h-screen flex flex-col">
 
         <!-- HEADER -->
-        <header class="p-4 flex items-center gap-4">
-            <a href="index.html" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors">
-                <i class="fas fa-arrow-left text-white/70"></i>
-            </a>
-            <div>
-                <h1 class="text-xl font-black">Settings</h1>
-                <p class="text-xs text-white/50">Configure your project and app</p>
+        <header class="bg-dot-navy text-white p-4">
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="w-10 h-10 flex items-center justify-center border border-slate-600 hover:bg-slate-800 transition-colors">
+                    <i class="fas fa-arrow-left text-slate-400"></i>
+                </a>
+                <div>
+                    <p class="text-[10px] font-bold text-dot-yellow uppercase tracking-widest">System Configuration</p>
+                    <h1 class="text-xl font-bold">Project Settings</h1>
+                </div>
             </div>
         </header>
 
-        <!-- MAIN CONTENT -->
-        <main class="flex-1 p-6 space-y-6">
+        <!-- FORM -->
+        <main class="flex-1 p-4 space-y-4">
 
-            <!-- PROJECT INFO SECTION -->
-            <section class="bg-white/10 backdrop-blur-sm rounded-3xl p-5 border border-white/10">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 rounded-full bg-indigo-500/30 flex items-center justify-center">
-                        <i class="fas fa-hard-hat text-indigo-300"></i>
-                    </div>
-                    <div>
-                        <h2 class="font-bold">Project Information</h2>
-                        <p class="text-xs text-white/50">Edit project details</p>
-                    </div>
+            <!-- Project Information -->
+            <section class="bg-white border-2 border-slate-200">
+                <div class="bg-dot-navy text-white p-4">
+                    <h2 class="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-building text-dot-yellow"></i>
+                        Project Information
+                    </h2>
                 </div>
-
-                <div class="space-y-4">
+                <div class="p-4 space-y-4">
                     <div>
-                        <label class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Project Name</label>
-                        <input type="text" id="projectName" class="w-full mt-1 bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-indigo-500">
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-[10px] font-bold text-white/40 uppercase tracking-widest">NOAB Project No.</label>
-                            <input type="text" id="noabProjectNo" class="w-full mt-1 bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-indigo-500">
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-white/40 uppercase tracking-widest">CNO Solicitation No.</label>
-                            <input type="text" id="cnoSolicitationNo" class="w-full mt-1 bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-indigo-500">
-                        </div>
+                        <label class="text-xs font-bold text-dot-blue uppercase tracking-wider">Project Name</label>
+                        <input type="text" id="projectName" class="w-full mt-2 bg-white border-2 border-slate-300 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-dot-blue" placeholder="Enter project name">
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Location</label>
-                        <input type="text" id="location" class="w-full mt-1 bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-indigo-500">
+                        <label class="text-xs font-bold text-dot-blue uppercase tracking-wider">NOAB Project No.</label>
+                        <input type="text" id="noabProjectNo" class="w-full mt-2 bg-white border-2 border-slate-300 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-dot-blue" placeholder="e.g. 1291">
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Engineer</label>
-                        <input type="text" id="engineer" class="w-full mt-1 bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-indigo-500">
+                        <label class="text-xs font-bold text-dot-blue uppercase tracking-wider">Location</label>
+                        <input type="text" id="location" class="w-full mt-2 bg-white border-2 border-slate-300 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-dot-blue" placeholder="e.g. MSY Airport">
                     </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-white/40 uppercase tracking-widest">General Contractor</label>
-                        <input type="text" id="contractor" class="w-full mt-1 bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-indigo-500">
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Notice to Proceed</label>
-                            <input type="text" id="noticeToProceed" class="w-full mt-1 bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-indigo-500">
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Contract Duration</label>
-                            <input type="text" id="contractDuration" class="w-full mt-1 bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-indigo-500">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Inspector Name</label>
-                        <input type="text" id="completedBy" class="w-full mt-1 bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-indigo-500">
-                    </div>
-                </div>
-
-                <button onclick="saveProjectInfo()" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-colors">
-                    <i class="fas fa-save mr-2"></i>Save Project Info
-                </button>
-            </section>
-
-            <!-- DEFAULT TIMES SECTION -->
-            <section class="bg-white/10 backdrop-blur-sm rounded-3xl p-5 border border-white/10">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 rounded-full bg-emerald-500/30 flex items-center justify-center">
-                        <i class="fas fa-clock text-emerald-300"></i>
-                    </div>
-                    <div>
-                        <h2 class="font-bold">Default Work Hours</h2>
-                        <p class="text-xs text-white/50">Set typical shift times</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Start Time</label>
-                        <input type="time" id="defaultStartTime" class="w-full mt-1 bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-white/40 uppercase tracking-widest">End Time</label>
-                        <input type="time" id="defaultEndTime" class="w-full mt-1 bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500">
-                    </div>
-                </div>
-
-                <button onclick="saveDefaultTimes()" class="w-full mt-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-colors">
-                    <i class="fas fa-save mr-2"></i>Save Default Times
-                </button>
-            </section>
-
-            <!-- KNOWN CONTRACTORS SECTION -->
-            <section class="bg-white/10 backdrop-blur-sm rounded-3xl p-5 border border-white/10">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 rounded-full bg-amber-500/30 flex items-center justify-center">
-                        <i class="fas fa-users text-amber-300"></i>
-                    </div>
-                    <div>
-                        <h2 class="font-bold">Known Contractors</h2>
-                        <p class="text-xs text-white/50">Manage contractor list for quick selection</p>
-                    </div>
-                </div>
-
-                <div id="contractorList" class="space-y-2 mb-4">
-                    <!-- Dynamic contractor list -->
-                </div>
-
-                <div class="flex gap-2">
-                    <input type="text" id="newContractor" placeholder="Add contractor name..." class="flex-1 bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-amber-500">
-                    <button onclick="addContractor()" class="px-4 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl transition-colors">
-                        <i class="fas fa-plus"></i>
-                    </button>
                 </div>
             </section>
 
-            <!-- DATA MANAGEMENT SECTION -->
-            <section class="bg-white/10 backdrop-blur-sm rounded-3xl p-5 border border-white/10">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 rounded-full bg-sky-500/30 flex items-center justify-center">
-                        <i class="fas fa-database text-sky-300"></i>
+            <!-- Contract Details -->
+            <section class="bg-white border-2 border-slate-200">
+                <div class="bg-dot-blue text-white p-4">
+                    <h2 class="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-file-contract"></i>
+                        Contract Details
+                    </h2>
+                </div>
+                <div class="p-4 space-y-4">
+                    <div>
+                        <label class="text-xs font-bold text-dot-blue uppercase tracking-wider">Notice to Proceed Date</label>
+                        <input type="date" id="ntpDate" class="w-full mt-2 bg-white border-2 border-slate-300 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-dot-blue">
                     </div>
                     <div>
-                        <h2 class="font-bold">Data Management</h2>
-                        <p class="text-xs text-white/50">Export and clear data</p>
+                        <label class="text-xs font-bold text-dot-blue uppercase tracking-wider">Contract Duration (Days)</label>
+                        <input type="number" id="contractDuration" class="w-full mt-2 bg-white border-2 border-slate-300 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-dot-blue" placeholder="e.g. 467">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-dot-blue uppercase tracking-wider">Contractor</label>
+                        <input type="text" id="contractor" class="w-full mt-2 bg-white border-2 border-slate-300 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-dot-blue" placeholder="e.g. HGBM">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-dot-blue uppercase tracking-wider">Engineer</label>
+                        <input type="text" id="engineer" class="w-full mt-2 bg-white border-2 border-slate-300 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-dot-blue" placeholder="e.g. Garver, LLC">
                     </div>
                 </div>
+            </section>
 
-                <div class="space-y-3">
-                    <button onclick="exportAllData()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2">
+            <!-- Inspector Details -->
+            <section class="bg-white border-2 border-slate-200">
+                <div class="bg-safety-green text-white p-4">
+                    <h2 class="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-user-shield"></i>
+                        Inspector Information
+                    </h2>
+                </div>
+                <div class="p-4 space-y-4">
+                    <div>
+                        <label class="text-xs font-bold text-dot-blue uppercase tracking-wider">Inspector Name</label>
+                        <input type="text" id="inspectorName" class="w-full mt-2 bg-white border-2 border-slate-300 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-dot-blue" placeholder="e.g. John Smith, RPR">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-dot-blue uppercase tracking-wider">Default Start Time</label>
+                        <input type="time" id="defaultStartTime" class="w-full mt-2 bg-white border-2 border-slate-300 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-dot-blue">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-dot-blue uppercase tracking-wider">Default End Time</label>
+                        <input type="time" id="defaultEndTime" class="w-full mt-2 bg-white border-2 border-slate-300 px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-dot-blue">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Data Management -->
+            <section class="bg-white border-2 border-slate-200">
+                <div class="bg-dot-orange text-white p-4">
+                    <h2 class="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-database"></i>
+                        Data Management
+                    </h2>
+                </div>
+                <div class="p-4 space-y-3">
+                    <button onclick="exportAllData()" class="w-full p-4 bg-dot-blue text-white font-bold uppercase hover:bg-blue-800 transition-colors flex items-center justify-center gap-2">
                         <i class="fas fa-download"></i>
-                        Export All Reports (JSON)
+                        Export All Reports
                     </button>
-
-                    <button onclick="clearTodayReport()" class="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2">
-                        <i class="fas fa-eraser"></i>
-                        Clear Today's Report
-                    </button>
-
-                    <button onclick="clearAllData()" class="w-full bg-red-600/20 hover:bg-red-600/40 text-red-400 font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 border border-red-500/30">
+                    <button onclick="confirmClearData()" class="w-full p-4 bg-red-600 text-white font-bold uppercase hover:bg-red-700 transition-colors flex items-center justify-center gap-2">
                         <i class="fas fa-trash-alt"></i>
-                        Clear All History
+                        Clear All Data
                     </button>
+                    <p class="text-xs text-slate-500 text-center">Warning: Clearing data cannot be undone</p>
                 </div>
-
-                <div class="mt-4 p-3 bg-white/5 rounded-xl">
-                    <p class="text-xs text-white/50">
-                        <i class="fas fa-info-circle mr-1"></i>
-                        <span id="storageInfo">Calculating storage...</span>
-                    </p>
-                </div>
-            </section>
-
-            <!-- APP INFO -->
-            <section class="text-center py-4">
-                <p class="text-[10px] font-bold text-white/30 uppercase tracking-widest">FieldVoice Pro v1.0</p>
-                <p class="text-xs text-white/20 mt-1">Voice-powered construction field reports</p>
             </section>
 
         </main>
+
+        <!-- SAVE BUTTON -->
+        <div class="p-4 bg-white border-t border-slate-200">
+            <button onclick="saveSettings()" class="w-full p-4 bg-safety-green hover:bg-green-700 text-white font-bold uppercase transition-colors flex items-center justify-center gap-2">
+                <i class="fas fa-save"></i>
+                Save Configuration
+            </button>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="bg-dot-navy text-center py-3">
+            <p class="text-[10px] text-slate-500 uppercase tracking-widest">
+                <i class="fas fa-shield-alt mr-1"></i>
+                DOT Compliant Field Documentation System
+            </p>
+        </footer>
     </div>
 
     <script>
-        // ============ STORAGE ============
-        function getSettings() {
-            const saved = localStorage.getItem('fieldvoice_settings');
+        const SETTINGS_KEY = 'fvp_settings';
+
+        function loadSettings() {
+            const saved = localStorage.getItem(SETTINGS_KEY);
             if (saved) {
                 try {
-                    return JSON.parse(saved);
-                } catch (e) {
-                    return getDefaultSettings();
-                }
+                    const settings = JSON.parse(saved);
+                    document.getElementById('projectName').value = settings.projectName || '';
+                    document.getElementById('noabProjectNo').value = settings.noabProjectNo || '';
+                    document.getElementById('location').value = settings.location || '';
+                    document.getElementById('ntpDate').value = settings.ntpDate || '';
+                    document.getElementById('contractDuration').value = settings.contractDuration || '';
+                    document.getElementById('contractor').value = settings.contractor || '';
+                    document.getElementById('engineer').value = settings.engineer || '';
+                    document.getElementById('inspectorName').value = settings.inspectorName || '';
+                    document.getElementById('defaultStartTime').value = settings.defaultStartTime || '06:00';
+                    document.getElementById('defaultEndTime').value = settings.defaultEndTime || '16:00';
+                } catch (e) {}
+            } else {
+                document.getElementById('projectName').value = 'North-South Connector Road Phase 2';
+                document.getElementById('noabProjectNo').value = '1291';
+                document.getElementById('location').value = 'Louis Armstrong New Orleans Int\'l Airport';
+                document.getElementById('ntpDate').value = '2025-06-27';
+                document.getElementById('contractDuration').value = '467';
+                document.getElementById('contractor').value = 'Hunt, Gibbs, Boh, & Metro (HGBM)';
+                document.getElementById('engineer').value = 'Garver, LLC';
+                document.getElementById('inspectorName').value = 'Inspector Name, RPR';
+                document.getElementById('defaultStartTime').value = '06:00';
+                document.getElementById('defaultEndTime').value = '16:00';
             }
-            return getDefaultSettings();
         }
 
-        function getDefaultSettings() {
-            return {
-                projectInfo: {
-                    projectName: "North-South Connector Road Phase 2",
-                    noabProjectNo: "1291",
-                    cnoSolicitationNo: "N/A",
-                    location: "Louis Armstrong New Orleans Int'l Airport",
-                    engineer: "Garver, LLC",
-                    contractor: "Hunt, Gibbs, Boh, & Metro (HGBM)",
-                    noticeToProceed: "June 27th, 2025",
-                    contractDuration: "467 days",
-                    completedBy: "Inspector Name, RPR"
-                },
-                defaultTimes: {
-                    startTime: "06:00",
-                    endTime: "16:00"
-                },
-                knownContractors: [
-                    "HGBM",
-                    "Boh Bros",
-                    "Metro Electric",
-                    "Allied Concrete"
-                ]
-            };
-        }
-
-        function saveSettings(settings) {
-            localStorage.setItem('fieldvoice_settings', JSON.stringify(settings));
-        }
-
-        // ============ UI FUNCTIONS ============
-        function loadSettings() {
-            const settings = getSettings();
-
-            // Project Info
-            document.getElementById('projectName').value = settings.projectInfo.projectName || '';
-            document.getElementById('noabProjectNo').value = settings.projectInfo.noabProjectNo || '';
-            document.getElementById('cnoSolicitationNo').value = settings.projectInfo.cnoSolicitationNo || '';
-            document.getElementById('location').value = settings.projectInfo.location || '';
-            document.getElementById('engineer').value = settings.projectInfo.engineer || '';
-            document.getElementById('contractor').value = settings.projectInfo.contractor || '';
-            document.getElementById('noticeToProceed').value = settings.projectInfo.noticeToProceed || '';
-            document.getElementById('contractDuration').value = settings.projectInfo.contractDuration || '';
-            document.getElementById('completedBy').value = settings.projectInfo.completedBy || '';
-
-            // Default Times
-            document.getElementById('defaultStartTime').value = settings.defaultTimes.startTime || '06:00';
-            document.getElementById('defaultEndTime').value = settings.defaultTimes.endTime || '16:00';
-
-            // Known Contractors
-            renderContractorList(settings.knownContractors);
-
-            // Storage Info
-            updateStorageInfo();
-        }
-
-        function renderContractorList(contractors) {
-            const list = document.getElementById('contractorList');
-            if (!contractors || contractors.length === 0) {
-                list.innerHTML = '<p class="text-sm text-white/40 text-center py-2">No contractors added</p>';
-                return;
-            }
-
-            list.innerHTML = contractors.map((c, i) => `
-                <div class="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2">
-                    <i class="fas fa-user-hard-hat text-amber-400/50"></i>
-                    <span class="flex-1 text-sm text-white/80">${c}</span>
-                    <button onclick="removeContractor(${i})" class="w-8 h-8 rounded-full hover:bg-red-500/20 flex items-center justify-center text-red-400/50 hover:text-red-400 transition-colors">
-                        <i class="fas fa-times text-xs"></i>
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        function saveProjectInfo() {
-            const settings = getSettings();
-            settings.projectInfo = {
+        function saveSettings() {
+            const settings = {
                 projectName: document.getElementById('projectName').value,
                 noabProjectNo: document.getElementById('noabProjectNo').value,
-                cnoSolicitationNo: document.getElementById('cnoSolicitationNo').value,
                 location: document.getElementById('location').value,
-                engineer: document.getElementById('engineer').value,
-                contractor: document.getElementById('contractor').value,
-                noticeToProceed: document.getElementById('noticeToProceed').value,
+                ntpDate: document.getElementById('ntpDate').value,
                 contractDuration: document.getElementById('contractDuration').value,
-                completedBy: document.getElementById('completedBy').value
+                contractor: document.getElementById('contractor').value,
+                engineer: document.getElementById('engineer').value,
+                inspectorName: document.getElementById('inspectorName').value,
+                defaultStartTime: document.getElementById('defaultStartTime').value,
+                defaultEndTime: document.getElementById('defaultEndTime').value
             };
-            saveSettings(settings);
-            showToast('Project info saved!');
-        }
-
-        function saveDefaultTimes() {
-            const settings = getSettings();
-            settings.defaultTimes = {
-                startTime: document.getElementById('defaultStartTime').value,
-                endTime: document.getElementById('defaultEndTime').value
-            };
-            saveSettings(settings);
-            showToast('Default times saved!');
-        }
-
-        function addContractor() {
-            const input = document.getElementById('newContractor');
-            const name = input.value.trim();
-            if (!name) return;
-
-            const settings = getSettings();
-            if (!settings.knownContractors.includes(name)) {
-                settings.knownContractors.push(name);
-                saveSettings(settings);
-                renderContractorList(settings.knownContractors);
-                input.value = '';
-                showToast('Contractor added!');
-            }
-        }
-
-        function removeContractor(index) {
-            const settings = getSettings();
-            settings.knownContractors.splice(index, 1);
-            saveSettings(settings);
-            renderContractorList(settings.knownContractors);
-            showToast('Contractor removed');
+            localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+            showToast('Configuration saved successfully');
         }
 
         function exportAllData() {
             const allData = {};
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
-                if (key.startsWith('fieldvoice_')) {
-                    try {
-                        allData[key] = JSON.parse(localStorage.getItem(key));
-                    } catch (e) {
-                        allData[key] = localStorage.getItem(key);
-                    }
+                if (key.startsWith('fieldvoice_') || key.startsWith('fvp_')) {
+                    try { allData[key] = JSON.parse(localStorage.getItem(key)); }
+                    catch (e) { allData[key] = localStorage.getItem(key); }
                 }
             }
-
-            const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
+            const dataStr = JSON.stringify(allData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `fieldvoice_export_${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `RPR_Data_Export_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
             a.click();
+            document.body.removeChild(a);
             URL.revokeObjectURL(url);
-
-            showToast('Data exported!');
+            showToast('Data exported successfully');
         }
 
-        function clearTodayReport() {
-            if (confirm('Clear today\'s report? This cannot be undone.')) {
-                const todayKey = `fieldvoice_report_${new Date().toISOString().split('T')[0]}`;
-                localStorage.removeItem(todayKey);
-                localStorage.removeItem('fieldvoice_report');
-                showToast('Today\'s report cleared');
-                updateStorageInfo();
-            }
-        }
-
-        function clearAllData() {
-            if (confirm('Clear ALL report history? This cannot be undone.')) {
-                if (confirm('Are you REALLY sure? All reports will be permanently deleted.')) {
-                    const keysToRemove = [];
-                    for (let i = 0; i < localStorage.length; i++) {
+        function confirmClearData() {
+            if (confirm('Are you sure you want to clear ALL data? This cannot be undone.')) {
+                if (confirm('This will delete all reports and settings. Are you absolutely sure?')) {
+                    for (let i = localStorage.length - 1; i >= 0; i--) {
                         const key = localStorage.key(i);
-                        if (key.startsWith('fieldvoice_report')) {
-                            keysToRemove.push(key);
+                        if (key.startsWith('fieldvoice_') || key.startsWith('fvp_')) {
+                            localStorage.removeItem(key);
                         }
                     }
-                    keysToRemove.forEach(key => localStorage.removeItem(key));
-                    showToast('All history cleared');
-                    updateStorageInfo();
+                    showToast('All data cleared', 'warning');
+                    setTimeout(() => window.location.href = 'index.html', 1500);
                 }
             }
         }
 
-        function updateStorageInfo() {
-            let totalSize = 0;
-            let reportCount = 0;
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith('fieldvoice_')) {
-                    totalSize += localStorage.getItem(key).length * 2; // UTF-16
-                    if (key.startsWith('fieldvoice_report_')) {
-                        reportCount++;
-                    }
-                }
-            }
-
-            const sizeKB = (totalSize / 1024).toFixed(1);
-            const sizeMB = (totalSize / (1024 * 1024)).toFixed(2);
-
-            document.getElementById('storageInfo').textContent =
-                `${reportCount} reports stored | ${sizeKB > 1000 ? sizeMB + ' MB' : sizeKB + ' KB'} used`;
-        }
-
-        function showToast(message) {
+        function showToast(message, type = 'success') {
+            const existing = document.querySelector('.toast-msg');
+            if (existing) existing.remove();
+            const colors = { success: 'bg-safety-green', warning: 'bg-dot-orange', error: 'bg-red-600' };
             const toast = document.createElement('div');
-            toast.className = 'fixed bottom-20 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-full font-bold text-sm shadow-lg animate-bounce';
-            toast.textContent = message;
+            toast.className = `toast-msg fixed bottom-24 left-1/2 -translate-x-1/2 ${colors[type] || colors.success} text-white px-6 py-3 font-bold text-sm shadow-lg z-50 flex items-center gap-2 uppercase`;
+            toast.innerHTML = `<i class="fas fa-check"></i>${message}`;
             document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
+            setTimeout(() => toast.remove(), 3000);
         }
 
-        // ============ INIT ============
         document.addEventListener('DOMContentLoaded', loadSettings);
-
-        // Enter key to add contractor
-        document.getElementById('newContractor').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addContractor();
-        });
     </script>
 </body>
 </html>

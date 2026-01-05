@@ -3,223 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FieldVoice Daily Report Pro</title>
+    <title>Daily Field Report System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dot-navy': '#0a1628',
+                        'dot-blue': '#1e3a5f',
+                        'dot-slate': '#334155',
+                        'dot-orange': '#ea580c',
+                        'dot-yellow': '#f59e0b',
+                        'safety-green': '#16a34a',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.02); }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
-        .animate-pulse-slow { animation: pulse-slow 2s ease-in-out infinite; }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-4px); }
+        .header-stripe {
+            background: repeating-linear-gradient(
+                -45deg,
+                #f59e0b,
+                #f59e0b 10px,
+                #0a1628 10px,
+                #0a1628 20px
+            );
+            height: 4px;
         }
-        .animate-float { animation: float 3s ease-in-out infinite; }
-        .gradient-bg {
-            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+        .official-badge {
+            border: 2px solid #1e3a5f;
+            position: relative;
         }
-        @keyframes slide-down {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .official-badge::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            border: 1px solid #1e3a5f;
+            pointer-events: none;
         }
-        .slide-down { animation: slide-down 0.3s ease-out; }
     </style>
 </head>
-<body class="gradient-bg min-h-screen">
-    <!-- Permissions Banner (shown when permissions are missing) -->
-    <div id="permissionsBanner" class="hidden fixed top-0 left-0 right-0 z-50 slide-down">
-        <div class="max-w-lg mx-auto">
-            <div class="m-3 bg-amber-500/95 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-amber-400/30">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-shield-exclamation text-white text-lg"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="font-bold text-white text-sm">Permissions Needed</p>
-                        <p id="permissionsBannerText" class="text-xs text-amber-100">Enable mic & location for full features</p>
-                    </div>
-                    <a href="permissions.html" class="px-4 py-2 bg-white text-amber-600 font-bold text-sm rounded-xl hover:bg-amber-50 transition-colors flex-shrink-0">
-                        Enable
-                    </a>
-                    <button onclick="dismissPermissionsBanner()" class="w-8 h-8 flex items-center justify-center text-white/70 hover:text-white">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
+<body class="bg-slate-100 min-h-screen">
+    <!-- Safety Stripe Header -->
+    <div class="header-stripe"></div>
+
+    <!-- Permissions Banner -->
+    <div id="permissionsBanner" class="hidden">
+        <div class="bg-dot-orange text-white">
+            <div class="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p class="flex-1 text-sm font-medium">System permissions required for full functionality</p>
+                <a href="permissions.html" class="px-4 py-1.5 bg-white text-dot-orange font-bold text-xs rounded">
+                    ENABLE
+                </a>
+                <button onclick="dismissPermissionsBanner()" class="text-white/80 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
         </div>
     </div>
 
-    <div id="app" class="max-w-lg mx-auto min-h-screen flex flex-col pb-8">
+    <div id="app" class="max-w-lg mx-auto min-h-screen flex flex-col">
 
         <!-- HEADER -->
-        <header class="p-6 pt-8">
+        <header class="bg-dot-navy text-white p-4">
             <div class="flex justify-between items-start">
                 <div>
-                    <h1 class="text-2xl font-black text-white tracking-tight">
-                        FIELDVOICE<span class="text-indigo-400">PRO</span>
+                    <div class="flex items-center gap-2 mb-1">
+                        <i class="fas fa-clipboard-check text-dot-yellow"></i>
+                        <span class="text-[10px] font-bold tracking-widest text-dot-yellow">DAILY FIELD REPORT</span>
+                    </div>
+                    <h1 class="text-xl font-bold tracking-tight">
+                        RPR INSPECTION SYSTEM
                     </h1>
-                    <p id="currentDate" class="text-sm font-medium text-white/50 mt-1"></p>
+                    <p id="currentDate" class="text-xs text-slate-400 mt-1"></p>
                 </div>
-                <button onclick="openSettings()" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white/50 hover:bg-white/20 transition-colors">
+                <button onclick="openSettings()" class="w-10 h-10 border border-slate-600 flex items-center justify-center text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
                     <i class="fas fa-cog"></i>
                 </button>
             </div>
         </header>
 
-        <!-- PROJECT CARD -->
-        <section class="px-6 mb-6">
-            <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-5 border border-white/10">
+        <!-- PROJECT INFO CARD -->
+        <section class="p-4">
+            <div class="official-badge bg-white p-4">
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-indigo-500/30 flex items-center justify-center text-indigo-300">
-                        <i class="fas fa-hard-hat text-lg"></i>
+                    <div class="w-14 h-14 bg-dot-navy flex items-center justify-center">
+                        <i class="fas fa-hard-hat text-dot-yellow text-xl"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Active Project</p>
-                        <h2 id="projectName" class="text-lg font-bold text-white leading-tight truncate"></h2>
-                        <p id="contractDay" class="text-sm text-white/50 mt-1"></p>
+                        <p class="text-[10px] font-bold text-dot-blue uppercase tracking-wider mb-1">ACTIVE PROJECT</p>
+                        <h2 id="projectName" class="text-base font-bold text-slate-800 leading-tight"></h2>
+                        <p id="contractDay" class="text-sm text-slate-500 mt-1 font-medium"></p>
+                    </div>
+                </div>
+                <div class="mt-3 pt-3 border-t border-slate-200 grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                        <span class="text-slate-400">Location:</span>
+                        <span class="font-medium text-slate-700 ml-1">MSY Airport</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400">Engineer:</span>
+                        <span class="font-medium text-slate-700 ml-1">Garver, LLC</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- WEATHER CARD -->
-        <section class="px-6 mb-6">
-            <div class="bg-gradient-to-br from-sky-500/20 to-indigo-500/20 backdrop-blur-sm rounded-3xl p-5 border border-white/10">
-                <div class="flex items-center justify-between mb-4">
-                    <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Today's Weather</p>
-                    <button id="syncWeatherBtn" onclick="syncWeather()" class="text-xs text-indigo-300 font-bold flex items-center gap-1 hover:text-indigo-200 transition-colors">
+        <!-- WEATHER STATUS CARD -->
+        <section class="px-4 mb-4">
+            <div class="bg-white border-l-4 border-dot-blue p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-cloud-sun text-dot-blue"></i>
+                        <span class="text-xs font-bold text-dot-blue uppercase tracking-wider">Weather Conditions</span>
+                    </div>
+                    <button id="syncWeatherBtn" onclick="syncWeather()" class="text-xs text-dot-blue font-bold flex items-center gap-1 hover:text-dot-navy transition-colors">
                         <i id="syncIcon" class="fas fa-sync-alt text-[10px]"></i>
-                        Sync
+                        SYNC
                     </button>
                 </div>
-                <div class="flex items-center gap-6">
+                <div class="grid grid-cols-4 gap-3">
                     <div class="text-center">
-                        <i id="weatherIcon" class="fas fa-sun text-4xl text-amber-400 animate-float"></i>
+                        <i id="weatherIcon" class="fas fa-sun text-2xl text-dot-yellow mb-1"></i>
+                        <p id="weatherCondition" class="text-xs font-medium text-slate-600">Loading...</p>
                     </div>
-                    <div class="flex-1">
-                        <p id="weatherCondition" class="text-xl font-bold text-white">Loading...</p>
-                        <div class="flex gap-4 mt-1">
-                            <span id="weatherTemp" class="text-sm text-white/70"><i class="fas fa-thermometer-half mr-1"></i>--/--</span>
-                            <span id="weatherPrecip" class="text-sm text-white/70"><i class="fas fa-tint mr-1"></i>0.00"</span>
-                        </div>
+                    <div class="text-center border-l border-slate-200">
+                        <p class="text-lg font-bold text-slate-800" id="weatherTempHigh">--°</p>
+                        <p class="text-[10px] text-slate-400 uppercase">High</p>
+                    </div>
+                    <div class="text-center border-l border-slate-200">
+                        <p class="text-lg font-bold text-slate-800" id="weatherTempLow">--°</p>
+                        <p class="text-[10px] text-slate-400 uppercase">Low</p>
+                    </div>
+                    <div class="text-center border-l border-slate-200">
+                        <p class="text-lg font-bold text-slate-800" id="weatherPrecipVal">0.00"</p>
+                        <p class="text-[10px] text-slate-400 uppercase">Precip</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- TODAY'S REPORT STATUS -->
-        <section class="px-6 mb-6">
-            <div id="reportStatusCard" class="bg-white/5 backdrop-blur-sm rounded-3xl p-5 border border-white/10">
+        <section class="px-4 mb-4">
+            <div id="reportStatusCard" class="bg-white border-2 border-slate-200 p-4">
                 <!-- Dynamic content based on report status -->
             </div>
         </section>
 
         <!-- MAIN ACTION BUTTON -->
-        <section class="px-6 flex-1 flex items-end">
-            <button id="mainActionBtn" onclick="handleMainAction()" class="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-3xl p-6 shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-500/50 active:scale-[0.98] transition-all">
+        <section class="px-4 flex-1 flex items-end pb-4">
+            <button id="mainActionBtn" onclick="handleMainAction()" class="w-full bg-dot-navy hover:bg-dot-blue text-white p-5 transition-colors shadow-lg">
                 <div class="flex items-center justify-center gap-4">
-                    <div class="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center">
-                        <i id="mainActionIcon" class="fas fa-microphone text-2xl"></i>
+                    <div class="w-12 h-12 bg-dot-yellow flex items-center justify-center">
+                        <i id="mainActionIcon" class="fas fa-microphone text-dot-navy text-xl"></i>
                     </div>
                     <div class="text-left">
-                        <p id="mainActionTitle" class="text-xl font-black">Start Today's Report</p>
-                        <p id="mainActionSubtitle" class="text-sm text-white/70">5-minute voice interview</p>
+                        <p id="mainActionTitle" class="text-lg font-bold uppercase tracking-wide">Begin Daily Report</p>
+                        <p id="mainActionSubtitle" class="text-xs text-slate-400">Voice-assisted field documentation</p>
                     </div>
+                    <i class="fas fa-chevron-right text-slate-500 ml-auto"></i>
                 </div>
             </button>
         </section>
 
         <!-- QUICK ACTIONS -->
-        <section class="px-6 mt-6">
-            <div class="flex gap-3">
-                <a href="report.html" id="viewReportBtn" class="hidden flex-1 bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-white/10 hover:bg-white/20 transition-colors">
-                    <i class="fas fa-file-alt text-white/50 text-lg mb-2"></i>
-                    <p class="text-xs font-bold text-white/70">View Report</p>
+        <section class="px-4 pb-6">
+            <div class="grid grid-cols-3 gap-2">
+                <a href="report.html" id="viewReportBtn" class="hidden bg-white border border-slate-300 p-4 text-center hover:bg-slate-50 transition-colors">
+                    <i class="fas fa-file-alt text-dot-blue text-lg mb-2"></i>
+                    <p class="text-xs font-bold text-slate-600 uppercase">View Report</p>
                 </a>
-                <a href="editor.html?section=photos" class="flex-1 bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-white/10 hover:bg-white/20 transition-colors">
-                    <i class="fas fa-camera text-white/50 text-lg mb-2"></i>
-                    <p class="text-xs font-bold text-white/70">Quick Photo</p>
+                <a href="editor.html?section=photos" class="bg-white border border-slate-300 p-4 text-center hover:bg-slate-50 transition-colors">
+                    <i class="fas fa-camera text-dot-blue text-lg mb-2"></i>
+                    <p class="text-xs font-bold text-slate-600 uppercase">Add Photo</p>
                 </a>
-                <button onclick="viewHistory()" class="flex-1 bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-white/10 hover:bg-white/20 transition-colors">
-                    <i class="fas fa-history text-white/50 text-lg mb-2"></i>
-                    <p class="text-xs font-bold text-white/70">History</p>
+                <button onclick="viewHistory()" class="bg-white border border-slate-300 p-4 text-center hover:bg-slate-50 transition-colors">
+                    <i class="fas fa-archive text-dot-blue text-lg mb-2"></i>
+                    <p class="text-xs font-bold text-slate-600 uppercase">Archives</p>
                 </button>
+                <a href="permissions.html" class="bg-white border border-slate-300 p-4 text-center hover:bg-slate-50 transition-colors">
+                    <i class="fas fa-shield-alt text-dot-blue text-lg mb-2"></i>
+                    <p class="text-xs font-bold text-slate-600 uppercase">Setup</p>
+                </a>
             </div>
         </section>
 
-        <!-- YESTERDAY CARRY-FORWARD BANNER -->
-        <section id="carryForwardBanner" class="hidden px-6 mt-6">
-            <div class="bg-amber-500/20 backdrop-blur-sm rounded-2xl p-4 border border-amber-500/30">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-amber-500/30 flex items-center justify-center">
-                        <i class="fas fa-history text-amber-400"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm font-bold text-amber-300">Yesterday's data available</p>
-                        <p class="text-xs text-amber-200/70">Contractors and equipment will carry forward</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <!-- FOOTER -->
+        <footer class="bg-dot-navy text-center py-3">
+            <p class="text-[10px] text-slate-500 uppercase tracking-widest">
+                <i class="fas fa-shield-alt mr-1"></i>
+                DOT Compliant Field Documentation System
+            </p>
+        </footer>
     </div>
 
     <!-- REPORT TYPE SELECTION MODAL -->
-    <div id="reportTypeModal" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-6">
-        <div class="bg-slate-800 rounded-3xl w-full max-w-sm p-6">
-            <div class="text-center mb-6">
-                <h2 class="text-xl font-black text-white mb-2">Choose Report Type</h2>
-                <p class="text-sm text-white/50">Select the type of report you want to create</p>
+    <div id="reportTypeModal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm">
+            <div class="bg-dot-navy text-white p-4">
+                <h2 class="text-lg font-bold uppercase tracking-wide">Select Report Type</h2>
+                <p class="text-xs text-slate-400">Choose documentation method</p>
             </div>
 
-            <div class="space-y-3">
+            <div class="p-4 space-y-3">
                 <!-- Quick Report Option -->
-                <button onclick="startQuickReport()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl p-5 text-left hover:shadow-lg hover:shadow-emerald-500/20 transition-all">
+                <button onclick="startQuickReport()" class="w-full bg-safety-green hover:bg-green-700 text-white p-4 text-left transition-colors">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                            <i class="fas fa-bolt text-white text-xl"></i>
+                        <div class="w-12 h-12 bg-white/20 flex items-center justify-center">
+                            <i class="fas fa-bolt text-xl"></i>
                         </div>
                         <div class="flex-1">
-                            <p class="font-bold text-white text-lg">Quick Report</p>
-                            <p class="text-sm text-white/70">Essential info only (~3 min)</p>
+                            <p class="font-bold uppercase">Quick Report</p>
+                            <p class="text-xs text-white/70">Essential fields only (~3 min)</p>
                         </div>
                         <i class="fas fa-chevron-right text-white/50"></i>
                     </div>
                 </button>
 
                 <!-- Full Report Option -->
-                <button onclick="startFullReport()" class="w-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl p-5 text-left hover:shadow-lg hover:shadow-indigo-500/20 transition-all">
+                <button onclick="startFullReport()" class="w-full bg-dot-navy hover:bg-dot-blue text-white p-4 text-left transition-colors">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                            <i class="fas fa-clipboard-list text-white text-xl"></i>
+                        <div class="w-12 h-12 bg-white/20 flex items-center justify-center">
+                            <i class="fas fa-clipboard-list text-xl"></i>
                         </div>
                         <div class="flex-1">
-                            <p class="font-bold text-white text-lg">Full Report</p>
-                            <p class="text-sm text-white/70">Complete daily report (~5 min)</p>
+                            <p class="font-bold uppercase">Full Report</p>
+                            <p class="text-xs text-white/70">Complete daily documentation (~5 min)</p>
                         </div>
                         <i class="fas fa-chevron-right text-white/50"></i>
                     </div>
                 </button>
             </div>
 
-            <button onclick="closeReportTypeModal()" class="w-full mt-4 p-3 text-white/50 hover:text-white/80 transition-colors text-sm font-medium">
-                Cancel
-            </button>
+            <div class="p-4 pt-0">
+                <button onclick="closeReportTypeModal()" class="w-full p-3 text-slate-500 hover:text-slate-700 text-sm font-medium border border-slate-300">
+                    CANCEL
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- HISTORY MODAL -->
-    <div id="historyModal" class="hidden fixed inset-0 bg-black/90 z-50 overflow-y-auto">
-        <div class="max-w-lg mx-auto p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-black text-white">Report History</h2>
-                <button onclick="closeHistory()" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white/70">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div id="historyList" class="space-y-3">
-                <!-- Dynamic content -->
+    <div id="historyModal" class="hidden fixed inset-0 bg-black/80 z-50 overflow-y-auto">
+        <div class="max-w-lg mx-auto p-4">
+            <div class="bg-white">
+                <div class="bg-dot-navy text-white p-4 flex justify-between items-center">
+                    <h2 class="text-lg font-bold uppercase tracking-wide">Report Archives</h2>
+                    <button onclick="closeHistory()" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-white">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="historyList" class="p-4 space-y-2 max-h-[60vh] overflow-y-auto">
+                    <!-- Dynamic content -->
+                </div>
             </div>
         </div>
     </div>
@@ -281,12 +327,10 @@
                     return null;
                 }
             }
-            // Try legacy key
             const legacy = localStorage.getItem('fieldvoice_report');
             if (legacy) {
                 try {
                     const parsed = JSON.parse(legacy);
-                    // Check if it's from today
                     if (parsed.overview?.date === new Date().toLocaleDateString()) {
                         return parsed;
                     }
@@ -298,7 +342,6 @@
         function hasYesterdayReport() {
             const saved = localStorage.getItem(getYesterdayKey());
             if (saved) return true;
-            // Check legacy
             const legacy = localStorage.getItem('fieldvoice_report');
             if (legacy) {
                 try {
@@ -316,9 +359,9 @@
         function getReportHistory() {
             const history = [];
             const keys = Object.keys(localStorage).filter(k => k.startsWith('fieldvoice_report_'));
-            keys.sort().reverse(); // Most recent first
+            keys.sort().reverse();
 
-            for (const key of keys.slice(0, 30)) { // Last 30 days
+            for (const key of keys.slice(0, 30)) {
                 try {
                     const report = JSON.parse(localStorage.getItem(key));
                     if (report) {
@@ -347,7 +390,6 @@
             syncIcon.classList.add('fa-spin');
 
             try {
-                // Check if geolocation is available
                 if (!navigator.geolocation) {
                     throw { code: -1, message: 'Geolocation not supported' };
                 }
@@ -356,16 +398,13 @@
                     navigator.geolocation.getCurrentPosition(
                         resolve,
                         reject,
-                        { timeout: 10000, enableHighAccuracy: false, maximumAge: 300000 } // Cache for 5 min
+                        { timeout: 10000, enableHighAccuracy: false, maximumAge: 300000 }
                     );
                 });
 
-                // Location success - update localStorage
                 localStorage.setItem('fvp_loc_granted', 'true');
 
                 const { latitude, longitude } = position.coords;
-                console.log('Weather sync - got location:', { latitude, longitude });
-
                 const response = await fetch(
                     `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto&temperature_unit=fahrenheit&precipitation_unit=inch`
                 );
@@ -377,32 +416,33 @@
                 const data = await response.json();
 
                 const weatherCodes = {
-                    0: { text: 'Clear', icon: 'fa-sun', color: 'text-amber-400' },
-                    1: { text: 'Mostly Clear', icon: 'fa-sun', color: 'text-amber-400' },
-                    2: { text: 'Partly Cloudy', icon: 'fa-cloud-sun', color: 'text-amber-300' },
-                    3: { text: 'Overcast', icon: 'fa-cloud', color: 'text-slate-300' },
+                    0: { text: 'Clear', icon: 'fa-sun', color: 'text-dot-yellow' },
+                    1: { text: 'Mostly Clear', icon: 'fa-sun', color: 'text-dot-yellow' },
+                    2: { text: 'Partly Cloudy', icon: 'fa-cloud-sun', color: 'text-slate-500' },
+                    3: { text: 'Overcast', icon: 'fa-cloud', color: 'text-slate-500' },
                     45: { text: 'Fog', icon: 'fa-smog', color: 'text-slate-400' },
                     48: { text: 'Fog', icon: 'fa-smog', color: 'text-slate-400' },
-                    51: { text: 'Light Drizzle', icon: 'fa-cloud-rain', color: 'text-blue-300' },
-                    53: { text: 'Drizzle', icon: 'fa-cloud-rain', color: 'text-blue-300' },
-                    55: { text: 'Heavy Drizzle', icon: 'fa-cloud-showers-heavy', color: 'text-blue-400' },
-                    61: { text: 'Light Rain', icon: 'fa-cloud-rain', color: 'text-blue-400' },
-                    63: { text: 'Rain', icon: 'fa-cloud-showers-heavy', color: 'text-blue-500' },
+                    51: { text: 'Light Drizzle', icon: 'fa-cloud-rain', color: 'text-dot-blue' },
+                    53: { text: 'Drizzle', icon: 'fa-cloud-rain', color: 'text-dot-blue' },
+                    55: { text: 'Heavy Drizzle', icon: 'fa-cloud-showers-heavy', color: 'text-dot-blue' },
+                    61: { text: 'Light Rain', icon: 'fa-cloud-rain', color: 'text-dot-blue' },
+                    63: { text: 'Rain', icon: 'fa-cloud-showers-heavy', color: 'text-dot-blue' },
                     65: { text: 'Heavy Rain', icon: 'fa-cloud-showers-heavy', color: 'text-blue-600' },
-                    80: { text: 'Showers', icon: 'fa-cloud-showers-heavy', color: 'text-blue-500' },
-                    95: { text: 'Thunderstorm', icon: 'fa-bolt', color: 'text-yellow-400' }
+                    80: { text: 'Showers', icon: 'fa-cloud-showers-heavy', color: 'text-dot-blue' },
+                    95: { text: 'Thunderstorm', icon: 'fa-bolt', color: 'text-dot-orange' }
                 };
 
-                const weatherInfo = weatherCodes[data.current_weather.weathercode] || { text: 'Cloudy', icon: 'fa-cloud', color: 'text-slate-300' };
+                const weatherInfo = weatherCodes[data.current_weather.weathercode] || { text: 'Cloudy', icon: 'fa-cloud', color: 'text-slate-400' };
                 const highTemp = Math.round(data.daily.temperature_2m_max[0]);
                 const lowTemp = Math.round(data.daily.temperature_2m_min[0]);
                 const precip = data.daily.precipitation_sum[0].toFixed(2);
 
                 // Update UI
                 document.getElementById('weatherCondition').textContent = weatherInfo.text;
-                document.getElementById('weatherTemp').innerHTML = `<i class="fas fa-thermometer-half mr-1"></i>${highTemp}°/${lowTemp}°F`;
-                document.getElementById('weatherPrecip').innerHTML = `<i class="fas fa-tint mr-1"></i>${precip}"`;
-                document.getElementById('weatherIcon').className = `fas ${weatherInfo.icon} text-4xl ${weatherInfo.color} animate-float`;
+                document.getElementById('weatherTempHigh').textContent = `${highTemp}°`;
+                document.getElementById('weatherTempLow').textContent = `${lowTemp}°`;
+                document.getElementById('weatherPrecipVal').textContent = `${precip}"`;
+                document.getElementById('weatherIcon').className = `fas ${weatherInfo.icon} text-2xl ${weatherInfo.color} mb-1`;
 
                 // Save to report if exists
                 let report = getReport();
@@ -419,43 +459,19 @@
                 }
             } catch (error) {
                 console.error('Weather sync failed:', error);
-
-                // Handle different error types
                 if (error.code === 1) {
-                    // PERMISSION_DENIED
                     localStorage.removeItem('fvp_loc_granted');
-                    localStorage.removeItem('fvp_loc_date');
                     document.getElementById('weatherCondition').textContent = 'Location blocked';
-                    document.getElementById('weatherIcon').className = 'fas fa-location-crosshairs text-4xl text-red-400';
-
-                    // Show a helpful message
-                    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                        syncBtn.innerHTML = '<i id="syncIcon" class="fas fa-exclamation-triangle text-[10px] text-red-400"></i><span class="text-red-300">Fix in Settings</span>';
-                        syncBtn.onclick = () => window.location.href = 'permissions.html';
-                    } else {
-                        syncBtn.innerHTML = '<i id="syncIcon" class="fas fa-lock text-[10px] text-red-400"></i><span class="text-red-300">Enable Location</span>';
-                        syncBtn.onclick = () => window.location.href = 'permissions.html';
-                    }
+                    document.getElementById('weatherIcon').className = 'fas fa-location-crosshairs text-2xl text-red-500 mb-1';
                 } else if (error.code === 2) {
-                    // POSITION_UNAVAILABLE
                     document.getElementById('weatherCondition').textContent = 'GPS unavailable';
-                    document.getElementById('weatherIcon').className = 'fas fa-satellite-dish text-4xl text-amber-400';
                 } else if (error.code === 3) {
-                    // TIMEOUT
-                    document.getElementById('weatherCondition').textContent = 'Location timeout';
-                    document.getElementById('weatherIcon').className = 'fas fa-clock text-4xl text-amber-400';
-                } else if (error.code === -1) {
-                    // Not supported
-                    document.getElementById('weatherCondition').textContent = 'Not supported';
-                    document.getElementById('weatherIcon').className = 'fas fa-times-circle text-4xl text-gray-400';
+                    document.getElementById('weatherCondition').textContent = 'Timeout';
                 } else {
-                    // API or network error
                     document.getElementById('weatherCondition').textContent = 'Sync failed';
-                    document.getElementById('weatherIcon').className = 'fas fa-exclamation-triangle text-4xl text-amber-400';
                 }
             }
 
-            // Re-query the sync icon in case it was replaced
             const updatedSyncIcon = document.getElementById('syncIcon');
             if (updatedSyncIcon) {
                 updatedSyncIcon.classList.remove('fa-spin');
@@ -473,48 +489,47 @@
             const viewReportBtn = document.getElementById('viewReportBtn');
 
             if (!report) {
-                // No report started
                 statusCard.innerHTML = `
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-indigo-500/30 flex items-center justify-center">
-                            <i class="fas fa-clipboard-list text-indigo-300 text-lg"></i>
+                        <div class="w-12 h-12 bg-slate-100 border-2 border-slate-300 flex items-center justify-center">
+                            <i class="fas fa-clipboard text-slate-400 text-lg"></i>
                         </div>
                         <div class="flex-1">
-                            <p class="text-sm font-bold text-white">No report started</p>
-                            <p class="text-xs text-white/50">Tap below to begin today's daily report</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">STATUS</p>
+                            <p class="text-sm font-bold text-slate-700">No Report Started</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Begin documentation to create today's report</p>
                         </div>
                     </div>
                 `;
-                mainActionIcon.className = 'fas fa-microphone text-2xl';
-                mainActionTitle.textContent = "Start Today's Report";
-                mainActionSubtitle.textContent = "5-minute voice interview";
+                mainActionIcon.className = 'fas fa-microphone text-dot-navy text-xl';
+                mainActionTitle.textContent = "Begin Daily Report";
+                mainActionSubtitle.textContent = "Voice-assisted field documentation";
                 viewReportBtn.classList.add('hidden');
             } else if (report.meta?.interviewCompleted) {
-                // Report completed
                 const contractorCount = report.contractors?.length || 0;
                 const photoCount = report.photos?.length || 0;
 
                 statusCard.innerHTML = `
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-emerald-500/30 flex items-center justify-center">
-                            <i class="fas fa-check text-emerald-400 text-lg"></i>
+                        <div class="w-12 h-12 bg-safety-green flex items-center justify-center">
+                            <i class="fas fa-check text-white text-lg"></i>
                         </div>
                         <div class="flex-1">
-                            <p class="text-sm font-bold text-white">Report Complete</p>
-                            <p class="text-xs text-white/50">${contractorCount} contractors · ${photoCount} photos</p>
+                            <p class="text-xs font-bold text-safety-green uppercase tracking-wider">COMPLETE</p>
+                            <p class="text-sm font-bold text-slate-700">Report Finalized</p>
+                            <p class="text-xs text-slate-500 mt-0.5">${contractorCount} contractors · ${photoCount} photos documented</p>
                         </div>
-                        <a href="report.html" class="px-4 py-2 bg-emerald-500 text-white rounded-xl text-sm font-bold hover:bg-emerald-400 transition-colors">
+                        <a href="report.html" class="px-4 py-2 bg-dot-navy text-white text-xs font-bold uppercase hover:bg-dot-blue transition-colors">
                             View
                         </a>
                     </div>
                 `;
-                mainActionIcon.className = 'fas fa-edit text-2xl';
+                mainActionIcon.className = 'fas fa-edit text-dot-navy text-xl';
                 mainActionTitle.textContent = "Continue Editing";
-                mainActionSubtitle.textContent = "Add more details or photos";
+                mainActionSubtitle.textContent = "Add additional details or photos";
                 viewReportBtn.classList.remove('hidden');
                 viewReportBtn.classList.add('flex');
             } else {
-                // Report in progress
                 const progress = calculateProgress(report);
                 const currentStep = report.meta?.currentStep || 0;
                 const stepNames = ['Weather', 'Site Conditions', 'Contractors', 'Work Details', 'Headcounts', 'Equipment', 'Issues', 'Inspections', 'Safety', 'Visitors', 'Photos'];
@@ -522,24 +537,24 @@
 
                 statusCard.innerHTML = `
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-amber-500/30 flex items-center justify-center">
-                            <i class="fas fa-clipboard-list text-amber-400 text-lg"></i>
+                        <div class="w-12 h-12 bg-dot-orange flex items-center justify-center">
+                            <i class="fas fa-pen text-white text-lg"></i>
                         </div>
                         <div class="flex-1">
-                            <p class="text-sm font-bold text-white">Report In Progress</p>
-                            <p class="text-xs text-white/40 mt-0.5">Next: ${currentStepName}</p>
+                            <p class="text-xs font-bold text-dot-orange uppercase tracking-wider">IN PROGRESS</p>
+                            <p class="text-sm font-bold text-slate-700">Report Active</p>
                             <div class="flex items-center gap-2 mt-1">
-                                <div class="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                                    <div class="h-full bg-gradient-to-r from-amber-400 to-emerald-400 rounded-full transition-all" style="width: ${progress}%"></div>
+                                <div class="flex-1 h-2 bg-slate-200 overflow-hidden">
+                                    <div class="h-full bg-dot-orange transition-all" style="width: ${progress}%"></div>
                                 </div>
-                                <span class="text-xs text-white/50">${progress}%</span>
+                                <span class="text-xs font-bold text-slate-500">${progress}%</span>
                             </div>
                         </div>
                     </div>
                 `;
-                mainActionIcon.className = 'fas fa-play text-2xl';
-                mainActionTitle.textContent = "Continue Interview";
-                mainActionSubtitle.textContent = `Resume at ${currentStepName}`;
+                mainActionIcon.className = 'fas fa-play text-dot-navy text-xl';
+                mainActionTitle.textContent = "Continue Report";
+                mainActionSubtitle.textContent = `Resume at: ${currentStepName}`;
                 viewReportBtn.classList.remove('hidden');
                 viewReportBtn.classList.add('flex');
             }
@@ -565,21 +580,18 @@
         function handleMainAction() {
             const report = getReport();
             if (report && report.meta?.interviewCompleted) {
-                // If report is completed, go to the appropriate interview page
                 if (report.meta?.reportType === 'quick') {
                     window.location.href = 'quick-interview.html';
                 } else {
                     window.location.href = 'interview.html';
                 }
             } else if (report) {
-                // Continue existing report
                 if (report.meta?.reportType === 'quick') {
                     window.location.href = 'quick-interview.html';
                 } else {
                     window.location.href = 'interview.html';
                 }
             } else {
-                // Show report type selection modal for new reports
                 document.getElementById('reportTypeModal').classList.remove('hidden');
             }
         }
@@ -607,22 +619,22 @@
             if (history.length === 0) {
                 list.innerHTML = `
                     <div class="text-center py-12">
-                        <i class="fas fa-inbox text-4xl text-white/20 mb-4"></i>
-                        <p class="text-white/50">No report history yet</p>
+                        <i class="fas fa-archive text-4xl text-slate-300 mb-4"></i>
+                        <p class="text-slate-500">No archived reports</p>
                     </div>
                 `;
             } else {
                 list.innerHTML = history.map(h => `
-                    <a href="report.html?key=${h.key}" class="block bg-white/10 rounded-2xl p-4 hover:bg-white/20 transition-colors">
+                    <a href="report.html?key=${h.key}" class="block bg-slate-50 border border-slate-200 p-4 hover:bg-slate-100 transition-colors">
                         <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full ${h.completed ? 'bg-emerald-500/30' : 'bg-amber-500/30'} flex items-center justify-center">
-                                <i class="fas ${h.completed ? 'fa-check text-emerald-400' : 'fa-clock text-amber-400'}"></i>
+                            <div class="w-10 h-10 ${h.completed ? 'bg-safety-green' : 'bg-dot-orange'} flex items-center justify-center">
+                                <i class="fas ${h.completed ? 'fa-check' : 'fa-clock'} text-white text-sm"></i>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-sm font-bold text-white truncate">${h.projectName}</p>
-                                <p class="text-xs text-white/50">${h.date} · ${h.contractorCount} contractors</p>
+                                <p class="text-sm font-bold text-slate-700 truncate">${h.projectName}</p>
+                                <p class="text-xs text-slate-500">${h.date} · ${h.contractorCount} contractors</p>
                             </div>
-                            <i class="fas fa-chevron-right text-white/30"></i>
+                            <i class="fas fa-chevron-right text-slate-300"></i>
                         </div>
                     </a>
                 `).join('');
@@ -652,7 +664,6 @@
             const bannerDismissed = localStorage.getItem('fvp_banner_dismissed') === 'true';
             const bannerDismissedDate = localStorage.getItem('fvp_banner_dismissed_date');
 
-            // Reset banner dismissal after 24 hours
             if (bannerDismissedDate) {
                 const dismissedTime = new Date(bannerDismissedDate).getTime();
                 const now = new Date().getTime();
@@ -674,7 +685,6 @@
 
         function shouldShowOnboarding() {
             const state = checkPermissionState();
-            // Show onboarding on first visit if on mobile and permissions not granted
             if (isMobile && !state.onboarded && !state.allGranted) {
                 return true;
             }
@@ -683,11 +693,6 @@
 
         function shouldShowBanner() {
             const state = checkPermissionState();
-            // Show banner if:
-            // 1. On mobile
-            // 2. Onboarding was completed (or skipped)
-            // 3. At least one permission is missing
-            // 4. Banner wasn't dismissed recently
             if (isMobile && state.onboarded && !state.allGranted && !state.bannerDismissed) {
                 return true;
             }
@@ -695,18 +700,7 @@
         }
 
         function showPermissionsBanner() {
-            const state = checkPermissionState();
             const banner = document.getElementById('permissionsBanner');
-            const bannerText = document.getElementById('permissionsBannerText');
-
-            if (!state.micGranted && !state.locGranted) {
-                bannerText.textContent = 'Enable mic & location for full features';
-            } else if (!state.micGranted) {
-                bannerText.textContent = 'Enable microphone for voice notes';
-            } else if (!state.locGranted) {
-                bannerText.textContent = 'Enable location for weather & GPS';
-            }
-
             banner.classList.remove('hidden');
         }
 
@@ -719,18 +713,15 @@
 
         // ============ INIT ============
         document.addEventListener('DOMContentLoaded', () => {
-            // Check if first-time user needs permissions onboarding
             if (shouldShowOnboarding()) {
                 window.location.href = 'permissions.html';
                 return;
             }
 
-            // Show permissions banner if needed
             if (shouldShowBanner()) {
                 showPermissionsBanner();
             }
 
-            // Set date
             document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
                 weekday: 'long',
                 month: 'long',
@@ -738,19 +729,10 @@
                 year: 'numeric'
             });
 
-            // Set project info
             document.getElementById('projectName').textContent = INITIAL_OVERVIEW.projectName;
             document.getElementById('contractDay').textContent = INITIAL_OVERVIEW.contractDayNo;
 
-            // Check for yesterday's report
-            if (hasYesterdayReport()) {
-                document.getElementById('carryForwardBanner').classList.remove('hidden');
-            }
-
-            // Update report status
             updateReportStatus();
-
-            // Sync weather
             syncWeather();
         });
     </script>
