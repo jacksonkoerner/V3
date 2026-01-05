@@ -753,7 +753,7 @@
                         '(Get a free key at console.groq.com)'
                     );
                     if (setupNow) {
-                        window.location.href = 'review.html#apiKeySection';
+                        window.location.href = 'permissions.html#apiKeyCard';
                     }
                     return;
                 }
@@ -836,7 +836,7 @@
                     } else {
                         alert(
                             'Speech recognition requires Siri & Dictation to be enabled.\n\n' +
-                            'Alternatively, set up a Groq API key on the Review page for AI transcription.'
+                            'Alternatively, set up a Groq API key on the Permissions page for AI transcription.'
                         );
                     }
                 }
@@ -866,7 +866,7 @@
                 } catch (err) {
                     console.error('Whisper transcription failed:', err);
                     if (err.message === 'NO_API_KEY') {
-                        alert('Please set up your Groq API key on the Review page.');
+                        alert('Please set up your Groq API key on the Permissions page.');
                     } else if (err.message === 'Recording too short') {
                         showToast('Recording too short', 'warning');
                     } else {
