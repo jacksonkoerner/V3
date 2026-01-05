@@ -95,24 +95,6 @@
             </div>
         </header>
 
-        <!-- API KEY INPUT -->
-        <div id="apiKeySection" class="px-4 pt-4">
-            <div class="bg-dot-yellow/20 border-2 border-dot-yellow p-4">
-                <div class="flex items-center gap-3 mb-3">
-                    <i class="fas fa-key text-dot-orange"></i>
-                    <p class="font-bold text-slate-800 uppercase text-sm">AI Refinement (Optional)</p>
-                </div>
-                <p class="text-xs text-slate-600 mb-3">Enter your Groq API key to enable AI text refinement. Get a free key at <a href="https://console.groq.com" target="_blank" class="underline text-dot-blue font-bold">console.groq.com</a></p>
-                <div class="flex gap-2">
-                    <input type="password" id="apiKeyInput" class="flex-1 bg-white border-2 border-slate-300 px-4 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-dot-blue" placeholder="gsk_...">
-                    <button onclick="saveApiKey()" class="px-4 py-2 bg-dot-orange hover:bg-orange-700 text-white font-bold uppercase text-sm transition-colors">
-                        Save
-                    </button>
-                </div>
-                <p id="apiStatus" class="text-xs text-slate-500 mt-2"></p>
-            </div>
-        </div>
-
         <!-- REFINE ALL BUTTON -->
         <div class="px-4 pt-4">
             <button id="refineAllBtn" onclick="refineAllSections()" class="w-full p-4 bg-dot-navy hover:bg-dot-blue text-white font-bold uppercase flex items-center justify-center gap-3 transition-all">
@@ -357,26 +339,10 @@
             localStorage.setItem('fieldvoice_report', JSON.stringify(report));
         }
 
-        function saveApiKey() {
-            const key = document.getElementById('apiKeyInput').value.trim();
-            if (key) {
-                localStorage.setItem('groq_api_key', key);
-                apiKey = key;
-                document.getElementById('apiStatus').textContent = 'API key saved!';
-                document.getElementById('apiStatus').className = 'text-xs text-safety-green mt-2 font-bold';
-                setTimeout(() => {
-                    document.getElementById('apiStatus').textContent = '';
-                }, 3000);
-            }
-        }
-
         function loadApiKey() {
             const saved = localStorage.getItem('groq_api_key');
             if (saved) {
                 apiKey = saved;
-                document.getElementById('apiKeyInput').value = saved;
-                document.getElementById('apiStatus').textContent = 'API key loaded from storage';
-                document.getElementById('apiStatus').className = 'text-xs text-slate-500 mt-2';
             }
         }
 
@@ -548,8 +514,10 @@
             }
 
             if (!apiKey) {
-                alert('Please enter your Groq API key first');
-                document.getElementById('apiKeyInput').focus();
+                const goToSetup = confirm('API key required for AI refinement.\n\nWould you like to set up your Groq API key now?');
+                if (goToSetup) {
+                    window.location.href = 'permissions.html#apiKeyCard';
+                }
                 return;
             }
 

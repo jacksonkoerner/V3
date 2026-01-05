@@ -216,8 +216,8 @@
                                             <strong>3.</strong> Voice recording will automatically use AI transcription
                                         </p>
                                     </div>
-                                    <a href="review.html#apiKeySection" class="mt-3 w-full block text-center px-4 py-3 bg-safety-green hover:bg-green-700 text-white font-bold text-xs uppercase transition-colors">
-                                        <i class="fas fa-key mr-2"></i>Set Up API Key
+                                    <a href="#apiKeyCard" onclick="document.getElementById('apiKeyCard').scrollIntoView({behavior:'smooth'}); document.getElementById('apiKeyInput').focus();" class="mt-3 w-full block text-center px-4 py-3 bg-safety-green hover:bg-green-700 text-white font-bold text-xs uppercase transition-colors cursor-pointer">
+                                        <i class="fas fa-key mr-2"></i>Set Up API Key Below
                                     </a>
                                 </div>
                             </div>
@@ -260,6 +260,48 @@
                         <button id="camBtn" onclick="requestCamera()" class="px-4 py-2 bg-dot-orange hover:bg-orange-700 text-white font-bold text-xs uppercase transition-colors">
                             Enable
                         </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== GROQ API KEY SECTION ==================== -->
+            <div id="apiKeyCard" class="permission-card bg-white border-2 border-slate-200">
+                <div class="p-4">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 bg-dot-yellow flex items-center justify-center flex-shrink-0">
+                            <i id="apiKeyIcon" class="fas fa-key text-dot-navy text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="font-bold text-slate-800 uppercase text-sm">Groq API Key</h2>
+                            <p id="apiKeyStatus" class="text-sm text-slate-500 mt-1">Required for voice transcription & AI</p>
+                        </div>
+                        <div id="apiKeyBadge" class="hidden px-3 py-1 bg-safety-green text-white text-xs font-bold uppercase">
+                            <i class="fas fa-check mr-1"></i>Saved
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-slate-200">
+                        <p class="text-xs text-slate-600 mb-3">
+                            Get a free API key at <a href="https://console.groq.com" target="_blank" class="underline text-dot-blue font-bold">console.groq.com</a>
+                        </p>
+                        <div class="flex gap-2">
+                            <input type="password" id="apiKeyInput" class="flex-1 bg-white border-2 border-slate-300 px-4 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-dot-blue" placeholder="gsk_...">
+                            <button onclick="saveApiKey()" class="px-4 py-2 bg-dot-orange hover:bg-orange-700 text-white font-bold uppercase text-sm transition-colors">
+                                Save
+                            </button>
+                        </div>
+                        <p id="apiKeyMessage" class="text-xs mt-2 hidden"></p>
+
+                        <div class="mt-3 bg-slate-50 border border-slate-200 p-3">
+                            <p class="text-xs text-slate-500">
+                                <i class="fas fa-info-circle text-dot-blue mr-1"></i>
+                                <strong>Used for:</strong> Voice-to-text on iPhone, AI report refinement
+                            </p>
+                            <p class="text-xs text-slate-400 mt-1">
+                                <i class="fas fa-dollar-sign mr-1"></i>
+                                Cost: ~$0.04/hour of audio (essentially free)
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -945,6 +987,56 @@
             window.location.href = 'index.html';
         }
 
+        // ============ GROQ API KEY ============
+        function saveApiKey() {
+            const input = document.getElementById('apiKeyInput');
+            const key = input.value.trim();
+            const message = document.getElementById('apiKeyMessage');
+            const badge = document.getElementById('apiKeyBadge');
+            const card = document.getElementById('apiKeyCard');
+
+            if (!key) {
+                message.textContent = 'Please enter an API key';
+                message.className = 'text-xs mt-2 text-red-500';
+                message.classList.remove('hidden');
+                log('API key save failed - empty key', 'error');
+                return;
+            }
+
+            if (!key.startsWith('gsk_')) {
+                message.textContent = 'Invalid key format (should start with gsk_)';
+                message.className = 'text-xs mt-2 text-dot-orange';
+                message.classList.remove('hidden');
+                log('API key save failed - invalid format', 'warn');
+                return;
+            }
+
+            localStorage.setItem('groq_api_key', key);
+            message.textContent = 'API key saved successfully!';
+            message.className = 'text-xs mt-2 text-safety-green';
+            message.classList.remove('hidden');
+            badge.classList.remove('hidden');
+            card.className = 'permission-card bg-white border-2 success';
+            log('Groq API key saved successfully', 'success');
+
+            // Hide message after 3 seconds
+            setTimeout(() => {
+                message.classList.add('hidden');
+            }, 3000);
+        }
+
+        function loadApiKey() {
+            const saved = localStorage.getItem('groq_api_key');
+            if (saved) {
+                document.getElementById('apiKeyInput').value = saved;
+                document.getElementById('apiKeyBadge').classList.remove('hidden');
+                document.getElementById('apiKeyCard').className = 'permission-card bg-white border-2 success';
+                document.getElementById('apiKeyStatus').textContent = 'API key configured';
+                document.getElementById('apiKeyStatus').className = 'text-sm text-safety-green mt-1 font-medium';
+                log('Groq API key loaded from storage', 'info');
+            }
+        }
+
         // ============ INIT ============
         function init() {
             // Log device info
@@ -973,6 +1065,9 @@
 
             // Check existing permissions
             checkExistingPermissions();
+
+            // Load API key if saved
+            loadApiKey();
         }
 
         function checkExistingPermissions() {
