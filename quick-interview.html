@@ -890,31 +890,130 @@
 
         // ============ PHOTOS ============
         async function handlePhotoInput(e) {
+            console.log('[PHOTO] handlePhotoInput triggered');
+
             const files = e.target.files;
-            if (!files) return;
-            for (const file of files) {
+            if (!files || files.length === 0) {
+                console.warn('[PHOTO] No files selected');
+                showToast('No photo selected', 'warning');
+                return;
+            }
+
+            console.log(`[PHOTO] Processing ${files.length} file(s)`);
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                console.log(`[PHOTO] File ${i + 1}: ${file.name}, type: ${file.type}, size: ${file.size} bytes`);
+
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    console.error(`[PHOTO] Invalid file type: ${file.type}`);
+                    showToast(`Invalid file type: ${file.type}`, 'error');
+                    continue;
+                }
+
+                // Validate file size (max 20MB)
+                if (file.size > 20 * 1024 * 1024) {
+                    console.error(`[PHOTO] File too large: ${file.size} bytes`);
+                    showToast('Photo too large (max 20MB)', 'error');
+                    continue;
+                }
+
+                // Show processing indicator
+                showToast('Processing photo...', 'info');
+
+                // Get GPS coordinates
                 let gps = null;
                 try {
+                    console.log('[PHOTO] Requesting GPS coordinates...');
                     const pos = await new Promise((resolve, reject) => {
-                        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000, enableHighAccuracy: true, maximumAge: 60000 });
+                        navigator.geolocation.getCurrentPosition(resolve, reject, {
+                            timeout: 10000,
+                            enableHighAccuracy: true,
+                            maximumAge: 60000
+                        });
                     });
-                    gps = { lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy };
-                } catch (err) { console.warn('Photo GPS failed:', err); }
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    report.photos.push({
-                        id: `photo_${Date.now()}`, url: ev.target.result, caption: '', timestamp: new Date().toISOString(),
-                        date: new Date().toLocaleDateString(), time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }), gps: gps
+                    gps = {
+                        lat: pos.coords.latitude,
+                        lng: pos.coords.longitude,
+                        accuracy: Math.round(pos.coords.accuracy)
+                    };
+                    console.log(`[PHOTO] GPS acquired: ${gps.lat.toFixed(6)}, ${gps.lng.toFixed(6)} (±${gps.accuracy}m)`);
+                } catch (err) {
+                    console.warn('[PHOTO] GPS failed:', err.code, err.message);
+                    // Continue without GPS - don't block the photo
+                }
+
+                // Read file as data URL
+                try {
+                    const dataUrl = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                            console.log(`[PHOTO] FileReader success, data length: ${ev.target.result.length}`);
+                            resolve(ev.target.result);
+                        };
+                        reader.onerror = (err) => {
+                            console.error('[PHOTO] FileReader error:', err);
+                            reject(new Error('Failed to read photo file'));
+                        };
+                        reader.onabort = () => {
+                            console.error('[PHOTO] FileReader aborted');
+                            reject(new Error('Photo read was aborted'));
+                        };
+                        reader.readAsDataURL(file);
                     });
+
+                    // Create timestamp
+                    const now = new Date();
+                    const timestamp = now.toISOString();
+                    const date = now.toLocaleDateString();
+                    const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+
+                    // Create photo object
+                    const photoObj = {
+                        id: `photo_${Date.now()}_${i}`,
+                        url: dataUrl,
+                        caption: '',
+                        timestamp: timestamp,
+                        date: date,
+                        time: time,
+                        gps: gps,
+                        fileName: file.name,
+                        fileSize: file.size,
+                        fileType: file.type
+                    };
+
+                    console.log('[PHOTO] Adding photo to report:', {
+                        id: photoObj.id,
+                        timestamp: photoObj.timestamp,
+                        gps: photoObj.gps,
+                        dataLength: dataUrl.length
+                    });
+
+                    report.photos.push(photoObj);
                     saveReport();
                     renderSection('photos');
                     showToast('Photo added', 'success');
-                };
-                reader.readAsDataURL(file);
+
+                    console.log(`[PHOTO] Success! Total photos: ${report.photos.length}`);
+
+                } catch (err) {
+                    console.error('[PHOTO] Failed to process photo:', err);
+                    showToast(`Photo error: ${err.message}`, 'error');
+                }
             }
+
+            // Reset the input so the same file can be selected again
+            e.target.value = '';
         }
 
-        function removePhoto(index) { report.photos.splice(index, 1); saveReport(); renderSection('photos'); }
+        function removePhoto(index) {
+            console.log(`[PHOTO] Removing photo at index ${index}`);
+            report.photos.splice(index, 1);
+            saveReport();
+            renderSection('photos');
+            showToast('Photo removed', 'info');
+        }
 
         // ============ RENDER SECTIONS ============
         function renderSection(section) {
@@ -966,14 +1065,29 @@
                     break;
                 case 'photos':
                     document.getElementById('photos-grid').innerHTML = report.photos.map((p, i) => `
-                        <div class="relative border border-slate-200 overflow-hidden">
-                            <img src="${p.url}" class="w-full aspect-square object-cover">
-                            <button onclick="removePhoto(${i})" class="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white text-xs flex items-center justify-center"><i class="fas fa-times"></i></button>
-                            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
-                                <p class="text-[10px] text-white/80">${p.time}</p>
+                        <div class="relative border-2 border-slate-300 overflow-hidden bg-slate-100">
+                            <img src="${p.url}" class="w-full aspect-square object-cover" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%23cbd5e1%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2250%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%2364748b%22 font-size=%2212%22>Error</text></svg>';">
+                            <button onclick="removePhoto(${i})" class="absolute top-2 right-2 w-7 h-7 bg-red-600 text-white text-xs flex items-center justify-center shadow-lg"><i class="fas fa-times"></i></button>
+                            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-2 pt-6">
+                                <div class="flex items-center gap-1 text-white/90 mb-1">
+                                    <i class="fas fa-clock text-[8px]"></i>
+                                    <p class="text-[10px] font-medium">${p.date} ${p.time}</p>
+                                </div>
+                                ${p.gps ? `
+                                    <div class="flex items-center gap-1 text-safety-green">
+                                        <i class="fas fa-map-marker-alt text-[8px]"></i>
+                                        <p class="text-[9px] font-mono">${p.gps.lat.toFixed(5)}, ${p.gps.lng.toFixed(5)}</p>
+                                        <span class="text-[8px] text-white/60">(±${p.gps.accuracy}m)</span>
+                                    </div>
+                                ` : `
+                                    <div class="flex items-center gap-1 text-dot-orange">
+                                        <i class="fas fa-location-crosshairs text-[8px]"></i>
+                                        <p class="text-[9px]">No GPS</p>
+                                    </div>
+                                `}
                             </div>
                         </div>
-                    `).join('') || '';
+                    `).join('') || '<p class="col-span-2 text-center text-slate-400 text-sm py-4">No photos yet</p>';
                     break;
             }
         }
