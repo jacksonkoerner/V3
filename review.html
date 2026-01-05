@@ -3,13 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Review Report - FieldVoice Pro</title>
+    <title>Review Report - Field Documentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .gradient-bg {
-            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dot-navy': '#0a1628',
+                        'dot-blue': '#1e3a5f',
+                        'dot-slate': '#334155',
+                        'dot-orange': '#ea580c',
+                        'dot-yellow': '#f59e0b',
+                        'safety-green': '#16a34a',
+                    }
+                }
+            }
         }
+    </script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+        .header-stripe { background: repeating-linear-gradient(-45deg, #f59e0b, #f59e0b 10px, #0a1628 10px, #0a1628 20px); height: 4px; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         @keyframes shimmer {
@@ -17,7 +32,7 @@
             100% { background-position: 200% 0; }
         }
         .loading-shimmer {
-            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+            background: linear-gradient(90deg, rgba(0,0,0,0.05) 25%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.05) 75%);
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
         }
@@ -31,20 +46,19 @@
         .editable-area {
             min-height: 60px;
             outline: none;
-            border-radius: 8px;
-            padding: 8px;
-            transition: background-color 0.2s;
+            padding: 12px;
+            transition: background-color 0.2s, border-color 0.2s;
         }
         .editable-area:hover {
-            background-color: rgba(255,255,255,0.05);
+            background-color: rgba(30, 58, 95, 0.05);
         }
         .editable-area:focus {
-            background-color: rgba(255,255,255,0.1);
-            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+            background-color: rgba(30, 58, 95, 0.1);
+            border-color: #1e3a5f;
         }
         .editable-area[data-placeholder]:empty:before {
             content: attr(data-placeholder);
-            color: rgba(255,255,255,0.3);
+            color: rgba(0,0,0,0.3);
             font-style: italic;
         }
         .section-na {
@@ -55,52 +69,54 @@
         }
     </style>
 </head>
-<body class="gradient-bg min-h-screen text-white">
+<body class="bg-slate-100 min-h-screen">
+    <div class="header-stripe"></div>
+
     <div id="app" class="max-w-4xl mx-auto min-h-screen flex flex-col">
 
         <!-- HEADER -->
-        <header class="sticky top-0 z-20 bg-slate-900/95 backdrop-blur-sm p-4 border-b border-white/10">
-            <div class="flex items-center justify-between">
-                <a href="quick-interview.html" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors">
-                    <i class="fas fa-arrow-left text-white/70"></i>
+        <header class="sticky top-0 z-20 bg-dot-navy text-white">
+            <div class="p-4 flex items-center justify-between">
+                <a href="quick-interview.html" class="w-10 h-10 flex items-center justify-center border border-slate-600 hover:bg-slate-800 transition-colors">
+                    <i class="fas fa-arrow-left text-slate-400"></i>
                 </a>
                 <div class="text-center flex-1 mx-4">
-                    <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">AI Review</p>
-                    <p id="currentDate" class="text-sm font-medium text-white/70"></p>
+                    <p class="text-[10px] font-bold text-safety-green uppercase tracking-widest">AI Review</p>
+                    <p id="currentDate" class="text-sm text-slate-400"></p>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="exportTrainingData()" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-bold rounded-xl transition-colors" title="Export for prompt training">
-                        <i class="fas fa-database mr-2"></i>Training
+                    <button onclick="exportTrainingData()" class="px-3 py-2 bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold uppercase transition-colors" title="Export for prompt training">
+                        <i class="fas fa-database mr-1"></i>Training
                     </button>
-                    <button onclick="saveAndExport()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-xl transition-colors">
-                        <i class="fas fa-file-export mr-2"></i>Export
+                    <button onclick="saveAndExport()" class="px-3 py-2 bg-safety-green hover:bg-green-700 text-white text-xs font-bold uppercase transition-colors">
+                        <i class="fas fa-file-export mr-1"></i>Export
                     </button>
                 </div>
             </div>
         </header>
 
-        <!-- API KEY INPUT (Collapsible) -->
+        <!-- API KEY INPUT -->
         <div id="apiKeySection" class="px-4 pt-4">
-            <div class="bg-amber-500/20 border border-amber-500/30 rounded-2xl p-4">
+            <div class="bg-dot-yellow/20 border-2 border-dot-yellow p-4">
                 <div class="flex items-center gap-3 mb-3">
-                    <i class="fas fa-key text-amber-400"></i>
-                    <p class="font-bold text-amber-300">AI Refinement (Optional)</p>
+                    <i class="fas fa-key text-dot-orange"></i>
+                    <p class="font-bold text-slate-800 uppercase text-sm">AI Refinement (Optional)</p>
                 </div>
-                <p class="text-xs text-amber-200/70 mb-3">Enter your Groq API key to enable AI text refinement. Get a free key at <a href="https://console.groq.com" target="_blank" class="underline">console.groq.com</a></p>
+                <p class="text-xs text-slate-600 mb-3">Enter your Groq API key to enable AI text refinement. Get a free key at <a href="https://console.groq.com" target="_blank" class="underline text-dot-blue font-bold">console.groq.com</a></p>
                 <div class="flex gap-2">
-                    <input type="password" id="apiKeyInput" class="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:border-amber-500" placeholder="gsk_...">
-                    <button onclick="saveApiKey()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl transition-colors">
+                    <input type="password" id="apiKeyInput" class="flex-1 bg-white border-2 border-slate-300 px-4 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-dot-blue" placeholder="gsk_...">
+                    <button onclick="saveApiKey()" class="px-4 py-2 bg-dot-orange hover:bg-orange-700 text-white font-bold uppercase text-sm transition-colors">
                         Save
                     </button>
                 </div>
-                <p id="apiStatus" class="text-xs text-white/50 mt-2"></p>
+                <p id="apiStatus" class="text-xs text-slate-500 mt-2"></p>
             </div>
         </div>
 
         <!-- REFINE ALL BUTTON -->
         <div class="px-4 pt-4">
-            <button id="refineAllBtn" onclick="refineAllSections()" class="w-full p-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-2xl font-bold text-white flex items-center justify-center gap-3 transition-all">
-                <i class="fas fa-magic text-lg"></i>
+            <button id="refineAllBtn" onclick="refineAllSections()" class="w-full p-4 bg-dot-navy hover:bg-dot-blue text-white font-bold uppercase flex items-center justify-center gap-3 transition-all">
+                <i class="fas fa-magic text-dot-yellow text-lg"></i>
                 <span>Refine All with AI</span>
             </button>
         </div>
@@ -109,165 +125,165 @@
         <main class="flex-1 p-4 pb-8 space-y-4 overflow-y-auto hide-scrollbar">
 
             <!-- Weather Section -->
-            <div id="weather-section" class="bg-white/5 rounded-2xl border border-white/10 overflow-hidden" data-section="weather">
-                <div class="p-4 border-b border-white/10 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-sky-500/20 flex items-center justify-center">
-                        <i class="fas fa-cloud-sun text-sky-400"></i>
+            <div id="weather-section" class="bg-white border-2 border-slate-200 overflow-hidden" data-section="weather">
+                <div class="p-4 border-b-2 border-slate-200 bg-sky-600 flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 flex items-center justify-center">
+                        <i class="fas fa-cloud-sun text-white"></i>
                     </div>
-                    <p class="font-bold text-white flex-1">Weather & Site Conditions</p>
-                    <button id="weather-refine-btn" onclick="refineSection('weather')" class="refine-btn px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition-colors">
+                    <p class="font-bold text-white uppercase text-sm flex-1">Weather & Site Conditions</p>
+                    <button id="weather-refine-btn" onclick="refineSection('weather')" class="refine-btn px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-xs font-bold uppercase transition-colors">
                         <i class="fas fa-wand-magic-sparkles mr-1"></i>Refine
                     </button>
                 </div>
-                <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/10">
+                <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200">
                     <div class="p-4">
-                        <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Original <span class="text-white/30 font-normal">(click to edit)</span></p>
-                        <div id="weather-original" class="editable-area text-sm text-white/70" contenteditable="true" data-placeholder="Enter weather and site conditions..." oninput="handleOriginalEdit('weather')">Loading...</div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Original <span class="text-slate-300 font-normal">(click to edit)</span></p>
+                        <div id="weather-original" class="editable-area text-sm text-slate-600 border-2 border-slate-200 bg-slate-50" contenteditable="true" data-placeholder="Enter weather and site conditions..." oninput="handleOriginalEdit('weather')">Loading...</div>
                     </div>
-                    <div class="p-4 bg-emerald-500/5">
-                        <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-2">
-                            AI Refined <span class="text-white/30 font-normal">(click to edit)</span>
+                    <div class="p-4 bg-safety-green/5">
+                        <p class="text-[10px] font-bold text-safety-green uppercase tracking-widest mb-2">
+                            AI Refined <span class="text-slate-400 font-normal">(click to edit)</span>
                         </p>
-                        <div id="weather-refined" class="editable-area text-sm text-white" contenteditable="true" data-placeholder="Click 'Refine' to improve or type here to edit..." oninput="handleEdit('weather')"></div>
+                        <div id="weather-refined" class="editable-area text-sm text-slate-800 border-2 border-safety-green/30 bg-white" contenteditable="true" data-placeholder="Click 'Refine' to improve or type here to edit..." oninput="handleEdit('weather')"></div>
                     </div>
                 </div>
             </div>
 
             <!-- Work Summary Section -->
-            <div id="activities-section" class="bg-white/5 rounded-2xl border border-white/10 overflow-hidden" data-section="activities">
-                <div class="p-4 border-b border-white/10 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-                        <i class="fas fa-tasks text-emerald-400"></i>
+            <div id="activities-section" class="bg-white border-2 border-slate-200 overflow-hidden" data-section="activities">
+                <div class="p-4 border-b-2 border-slate-200 bg-safety-green flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 flex items-center justify-center">
+                        <i class="fas fa-tasks text-white"></i>
                     </div>
-                    <p class="font-bold text-white flex-1">Work Summary</p>
-                    <button id="activities-refine-btn" onclick="refineSection('activities')" class="refine-btn px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition-colors">
+                    <p class="font-bold text-white uppercase text-sm flex-1">Work Summary</p>
+                    <button id="activities-refine-btn" onclick="refineSection('activities')" class="refine-btn px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-xs font-bold uppercase transition-colors">
                         <i class="fas fa-wand-magic-sparkles mr-1"></i>Refine
                     </button>
                 </div>
-                <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/10">
+                <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200">
                     <div class="p-4">
-                        <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Original <span class="text-white/30 font-normal">(click to edit)</span></p>
-                        <div id="activities-original" class="editable-area text-sm text-white/70" contenteditable="true" data-placeholder="Enter work summary..." oninput="handleOriginalEdit('activities')">Loading...</div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Original <span class="text-slate-300 font-normal">(click to edit)</span></p>
+                        <div id="activities-original" class="editable-area text-sm text-slate-600 border-2 border-slate-200 bg-slate-50" contenteditable="true" data-placeholder="Enter work summary..." oninput="handleOriginalEdit('activities')">Loading...</div>
                     </div>
-                    <div class="p-4 bg-emerald-500/5">
-                        <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-2">
-                            AI Refined <span class="text-white/30 font-normal">(click to edit)</span>
+                    <div class="p-4 bg-safety-green/5">
+                        <p class="text-[10px] font-bold text-safety-green uppercase tracking-widest mb-2">
+                            AI Refined <span class="text-slate-400 font-normal">(click to edit)</span>
                         </p>
-                        <div id="activities-refined" class="editable-area text-sm text-white" contenteditable="true" data-placeholder="Click 'Refine' to improve or type here to edit..." oninput="handleEdit('activities')"></div>
+                        <div id="activities-refined" class="editable-area text-sm text-slate-800 border-2 border-safety-green/30 bg-white" contenteditable="true" data-placeholder="Click 'Refine' to improve or type here to edit..." oninput="handleEdit('activities')"></div>
                     </div>
                 </div>
             </div>
 
             <!-- Issues Section -->
-            <div id="issues-section" class="bg-white/5 rounded-2xl border border-white/10 overflow-hidden" data-section="issues">
-                <div class="p-4 border-b border-white/10 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center">
-                        <i class="fas fa-exclamation-triangle text-red-400"></i>
+            <div id="issues-section" class="bg-white border-2 border-slate-200 overflow-hidden" data-section="issues">
+                <div class="p-4 border-b-2 border-slate-200 bg-red-600 flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-white"></i>
                     </div>
-                    <p class="font-bold text-white flex-1">Issues & Delays</p>
-                    <span id="issues-na-badge" class="hidden px-3 py-1.5 bg-white/10 text-white/50 text-xs font-bold rounded-lg">N/A</span>
-                    <button id="issues-refine-btn" onclick="refineSection('issues')" class="refine-btn px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition-colors">
+                    <p class="font-bold text-white uppercase text-sm flex-1">Issues & Delays</p>
+                    <span id="issues-na-badge" class="hidden px-3 py-1.5 bg-white/20 text-white text-xs font-bold uppercase">N/A</span>
+                    <button id="issues-refine-btn" onclick="refineSection('issues')" class="refine-btn px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-xs font-bold uppercase transition-colors">
                         <i class="fas fa-wand-magic-sparkles mr-1"></i>Refine
                     </button>
                 </div>
-                <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/10">
+                <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200">
                     <div class="p-4">
-                        <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Original <span class="text-white/30 font-normal">(click to edit)</span></p>
-                        <div id="issues-original" class="editable-area text-sm text-white/70" contenteditable="true" data-placeholder="Enter issues and delays..." oninput="handleOriginalEdit('issues')">Loading...</div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Original <span class="text-slate-300 font-normal">(click to edit)</span></p>
+                        <div id="issues-original" class="editable-area text-sm text-slate-600 border-2 border-slate-200 bg-slate-50" contenteditable="true" data-placeholder="Enter issues and delays..." oninput="handleOriginalEdit('issues')">Loading...</div>
                     </div>
-                    <div class="p-4 bg-emerald-500/5">
-                        <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-2">
-                            AI Refined <span class="text-white/30 font-normal">(click to edit)</span>
+                    <div class="p-4 bg-safety-green/5">
+                        <p class="text-[10px] font-bold text-safety-green uppercase tracking-widest mb-2">
+                            AI Refined <span class="text-slate-400 font-normal">(click to edit)</span>
                         </p>
-                        <div id="issues-refined" class="editable-area text-sm text-white" contenteditable="true" data-placeholder="Click 'Refine' to improve or type here to edit..." oninput="handleEdit('issues')"></div>
+                        <div id="issues-refined" class="editable-area text-sm text-slate-800 border-2 border-safety-green/30 bg-white" contenteditable="true" data-placeholder="Click 'Refine' to improve or type here to edit..." oninput="handleEdit('issues')"></div>
                     </div>
                 </div>
             </div>
 
             <!-- Inspections Section -->
-            <div id="inspections-section" class="bg-white/5 rounded-2xl border border-white/10 overflow-hidden" data-section="inspections">
-                <div class="p-4 border-b border-white/10 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
-                        <i class="fas fa-check-double text-purple-400"></i>
+            <div id="inspections-section" class="bg-white border-2 border-slate-200 overflow-hidden" data-section="inspections">
+                <div class="p-4 border-b-2 border-slate-200 bg-violet-600 flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 flex items-center justify-center">
+                        <i class="fas fa-check-double text-white"></i>
                     </div>
-                    <p class="font-bold text-white flex-1">QA/QC Inspections</p>
-                    <span id="inspections-na-badge" class="hidden px-3 py-1.5 bg-white/10 text-white/50 text-xs font-bold rounded-lg">N/A</span>
-                    <button id="inspections-refine-btn" onclick="refineSection('inspections')" class="refine-btn px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition-colors">
+                    <p class="font-bold text-white uppercase text-sm flex-1">QA/QC Inspections</p>
+                    <span id="inspections-na-badge" class="hidden px-3 py-1.5 bg-white/20 text-white text-xs font-bold uppercase">N/A</span>
+                    <button id="inspections-refine-btn" onclick="refineSection('inspections')" class="refine-btn px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-xs font-bold uppercase transition-colors">
                         <i class="fas fa-wand-magic-sparkles mr-1"></i>Refine
                     </button>
                 </div>
-                <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/10">
+                <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200">
                     <div class="p-4">
-                        <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Original <span class="text-white/30 font-normal">(click to edit)</span></p>
-                        <div id="inspections-original" class="editable-area text-sm text-white/70" contenteditable="true" data-placeholder="Enter inspections..." oninput="handleOriginalEdit('inspections')">Loading...</div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Original <span class="text-slate-300 font-normal">(click to edit)</span></p>
+                        <div id="inspections-original" class="editable-area text-sm text-slate-600 border-2 border-slate-200 bg-slate-50" contenteditable="true" data-placeholder="Enter inspections..." oninput="handleOriginalEdit('inspections')">Loading...</div>
                     </div>
-                    <div class="p-4 bg-emerald-500/5">
-                        <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-2">
-                            AI Refined <span class="text-white/30 font-normal">(click to edit)</span>
+                    <div class="p-4 bg-safety-green/5">
+                        <p class="text-[10px] font-bold text-safety-green uppercase tracking-widest mb-2">
+                            AI Refined <span class="text-slate-400 font-normal">(click to edit)</span>
                         </p>
-                        <div id="inspections-refined" class="editable-area text-sm text-white" contenteditable="true" data-placeholder="Click 'Refine' to improve or type here to edit..." oninput="handleEdit('inspections')"></div>
+                        <div id="inspections-refined" class="editable-area text-sm text-slate-800 border-2 border-safety-green/30 bg-white" contenteditable="true" data-placeholder="Click 'Refine' to improve or type here to edit..." oninput="handleEdit('inspections')"></div>
                     </div>
                 </div>
             </div>
 
             <!-- Safety Section -->
-            <div id="safety-section" class="bg-white/5 rounded-2xl border border-white/10 overflow-hidden" data-section="safety">
-                <div class="p-4 border-b border-white/10 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
-                        <i class="fas fa-hard-hat text-green-400"></i>
+            <div id="safety-section" class="bg-white border-2 border-slate-200 overflow-hidden" data-section="safety">
+                <div class="p-4 border-b-2 border-slate-200 bg-dot-orange flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 flex items-center justify-center">
+                        <i class="fas fa-hard-hat text-white"></i>
                     </div>
-                    <p class="font-bold text-white flex-1">Safety</p>
-                    <button id="safety-refine-btn" onclick="refineSection('safety')" class="refine-btn px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition-colors">
+                    <p class="font-bold text-white uppercase text-sm flex-1">Safety</p>
+                    <button id="safety-refine-btn" onclick="refineSection('safety')" class="refine-btn px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-xs font-bold uppercase transition-colors">
                         <i class="fas fa-wand-magic-sparkles mr-1"></i>Refine
                     </button>
                 </div>
-                <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/10">
+                <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200">
                     <div class="p-4">
-                        <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Original <span class="text-white/30 font-normal">(click to edit)</span></p>
-                        <div id="safety-original" class="editable-area text-sm text-white/70" contenteditable="true" data-placeholder="Enter safety notes..." oninput="handleOriginalEdit('safety')">Loading...</div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Original <span class="text-slate-300 font-normal">(click to edit)</span></p>
+                        <div id="safety-original" class="editable-area text-sm text-slate-600 border-2 border-slate-200 bg-slate-50" contenteditable="true" data-placeholder="Enter safety notes..." oninput="handleOriginalEdit('safety')">Loading...</div>
                     </div>
-                    <div class="p-4 bg-emerald-500/5">
-                        <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-2">
-                            AI Refined <span class="text-white/30 font-normal">(click to edit)</span>
+                    <div class="p-4 bg-safety-green/5">
+                        <p class="text-[10px] font-bold text-safety-green uppercase tracking-widest mb-2">
+                            AI Refined <span class="text-slate-400 font-normal">(click to edit)</span>
                         </p>
-                        <div id="safety-refined" class="editable-area text-sm text-white" contenteditable="true" data-placeholder="Click 'Refine' to improve or type here to edit..." oninput="handleEdit('safety')"></div>
+                        <div id="safety-refined" class="editable-area text-sm text-slate-800 border-2 border-safety-green/30 bg-white" contenteditable="true" data-placeholder="Click 'Refine' to improve or type here to edit..." oninput="handleEdit('safety')"></div>
                     </div>
                 </div>
             </div>
 
             <!-- Visitors Section -->
-            <div id="visitors-section" class="bg-white/5 rounded-2xl border border-white/10 overflow-hidden" data-section="visitors">
-                <div class="p-4 border-b border-white/10 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center">
-                        <i class="fas fa-user-tie text-indigo-400"></i>
+            <div id="visitors-section" class="bg-white border-2 border-slate-200 overflow-hidden" data-section="visitors">
+                <div class="p-4 border-b-2 border-slate-200 bg-dot-blue flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 flex items-center justify-center">
+                        <i class="fas fa-user-tie text-white"></i>
                     </div>
-                    <p class="font-bold text-white flex-1">Visitors & Communications</p>
-                    <span id="visitors-na-badge" class="hidden px-3 py-1.5 bg-white/10 text-white/50 text-xs font-bold rounded-lg">N/A</span>
-                    <button id="visitors-refine-btn" onclick="refineSection('visitors')" class="refine-btn px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition-colors">
+                    <p class="font-bold text-white uppercase text-sm flex-1">Visitors & Communications</p>
+                    <span id="visitors-na-badge" class="hidden px-3 py-1.5 bg-white/20 text-white text-xs font-bold uppercase">N/A</span>
+                    <button id="visitors-refine-btn" onclick="refineSection('visitors')" class="refine-btn px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-xs font-bold uppercase transition-colors">
                         <i class="fas fa-wand-magic-sparkles mr-1"></i>Refine
                     </button>
                 </div>
-                <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/10">
+                <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200">
                     <div class="p-4">
-                        <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2">Original <span class="text-white/30 font-normal">(click to edit)</span></p>
-                        <div id="visitors-original" class="editable-area text-sm text-white/70" contenteditable="true" data-placeholder="Enter visitors and communications..." oninput="handleOriginalEdit('visitors')">Loading...</div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Original <span class="text-slate-300 font-normal">(click to edit)</span></p>
+                        <div id="visitors-original" class="editable-area text-sm text-slate-600 border-2 border-slate-200 bg-slate-50" contenteditable="true" data-placeholder="Enter visitors and communications..." oninput="handleOriginalEdit('visitors')">Loading...</div>
                     </div>
-                    <div class="p-4 bg-emerald-500/5">
-                        <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-2">
-                            AI Refined <span class="text-white/30 font-normal">(click to edit)</span>
+                    <div class="p-4 bg-safety-green/5">
+                        <p class="text-[10px] font-bold text-safety-green uppercase tracking-widest mb-2">
+                            AI Refined <span class="text-slate-400 font-normal">(click to edit)</span>
                         </p>
-                        <div id="visitors-refined" class="editable-area text-sm text-white" contenteditable="true" data-placeholder="Click 'Refine' to improve or type here to edit..." oninput="handleEdit('visitors')"></div>
+                        <div id="visitors-refined" class="editable-area text-sm text-slate-800 border-2 border-safety-green/30 bg-white" contenteditable="true" data-placeholder="Click 'Refine' to improve or type here to edit..." oninput="handleEdit('visitors')"></div>
                     </div>
                 </div>
             </div>
 
             <!-- Photos Section -->
-            <div class="bg-white/5 rounded-2xl border border-white/10 overflow-hidden" data-section="photos">
-                <div class="p-4 border-b border-white/10 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-pink-500/20 flex items-center justify-center">
-                        <i class="fas fa-camera text-pink-400"></i>
+            <div class="bg-white border-2 border-slate-200 overflow-hidden" data-section="photos">
+                <div class="p-4 border-b-2 border-slate-200 bg-dot-navy flex items-center gap-3">
+                    <div class="w-10 h-10 bg-dot-yellow/30 flex items-center justify-center">
+                        <i class="fas fa-camera text-dot-yellow"></i>
                     </div>
-                    <p class="font-bold text-white flex-1">Progress Photos</p>
+                    <p class="font-bold text-white uppercase text-sm flex-1">Progress Photos</p>
                 </div>
                 <div class="p-4">
                     <div id="photos-grid" class="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -279,16 +295,21 @@
         </main>
 
         <!-- BOTTOM ACTION -->
-        <div class="sticky bottom-0 p-4 bg-slate-900/95 backdrop-blur-sm border-t border-white/10">
+        <div class="sticky bottom-0 p-4 bg-dot-navy border-t-4 border-dot-yellow">
             <div class="flex gap-3">
-                <button onclick="saveAndViewReport()" class="flex-1 p-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl text-center font-bold text-white transition-colors">
+                <button onclick="saveAndViewReport()" class="flex-1 p-4 bg-safety-green hover:bg-green-700 text-white text-center font-bold uppercase transition-colors">
                     <i class="fas fa-save mr-2"></i>Save & View Report
                 </button>
-                <button onclick="copyToClipboard()" class="px-6 py-4 bg-indigo-600 hover:bg-indigo-500 rounded-2xl font-bold text-white transition-colors">
+                <button onclick="copyToClipboard()" class="px-6 py-4 bg-dot-blue hover:bg-blue-800 text-white font-bold uppercase transition-colors">
                     <i class="fas fa-copy"></i>
                 </button>
             </div>
         </div>
+
+        <!-- Footer -->
+        <footer class="bg-dot-navy text-center py-3 border-t border-slate-700">
+            <p class="text-[10px] text-slate-500 uppercase tracking-widest">DOT Compliant Field Documentation System</p>
+        </footer>
     </div>
 
     <script>
@@ -308,7 +329,6 @@
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
-                    // Ensure required properties exist for legacy reports
                     if (!parsed.meta) parsed.meta = {};
                     if (!parsed.meta.naMarked) parsed.meta.naMarked = {};
                     if (!parsed.safety) parsed.safety = { hasIncidents: false, noIncidents: false, notes: [] };
@@ -321,7 +341,6 @@
             if (legacy) {
                 try {
                     const parsed = JSON.parse(legacy);
-                    // Ensure required properties exist for legacy reports
                     if (!parsed.meta) parsed.meta = {};
                     if (!parsed.meta.naMarked) parsed.meta.naMarked = {};
                     if (!parsed.safety) parsed.safety = { hasIncidents: false, noIncidents: false, notes: [] };
@@ -344,7 +363,7 @@
                 localStorage.setItem('groq_api_key', key);
                 apiKey = key;
                 document.getElementById('apiStatus').textContent = 'API key saved!';
-                document.getElementById('apiStatus').className = 'text-xs text-emerald-400 mt-2';
+                document.getElementById('apiStatus').className = 'text-xs text-safety-green mt-2 font-bold';
                 setTimeout(() => {
                     document.getElementById('apiStatus').textContent = '';
                 }, 3000);
@@ -357,7 +376,7 @@
                 apiKey = saved;
                 document.getElementById('apiKeyInput').value = saved;
                 document.getElementById('apiStatus').textContent = 'API key loaded from storage';
-                document.getElementById('apiStatus').className = 'text-xs text-white/50 mt-2';
+                document.getElementById('apiStatus').className = 'text-xs text-slate-500 mt-2';
             }
         }
 
@@ -366,7 +385,6 @@
             const refinedEl = document.getElementById(`${section}-refined`);
             const text = refinedEl.innerText.trim();
             refinedData[section] = text;
-            // Auto-save on edit
             saveRefinedDataToReport();
         }
 
@@ -374,15 +392,12 @@
             const originalEl = document.getElementById(`${section}-original`);
             const text = originalEl.innerText.trim();
 
-            // Update the report data based on section
             switch (section) {
                 case 'weather':
                     report.overview.weather.jobSiteCondition = text;
                     break;
                 case 'activities':
-                    // Store as a single activity with the edited text
                     if (report.activities.length > 0) {
-                        // Update the combined narrative
                         report.activities = [{
                             contractor: 'General',
                             trade: 'General',
@@ -397,36 +412,29 @@
                     }
                     break;
                 case 'issues':
-                    // Store as a single issue
                     report.generalIssues = text ? [text] : [];
                     break;
                 case 'inspections':
-                    // Store as a single inspection note
                     report.qaqcNotes = text ? [text] : [];
                     break;
                 case 'safety':
-                    // Store as a single safety note
                     report.safety.notes = text ? [text] : [];
                     break;
                 case 'visitors':
-                    // Store as a single visitor remark
                     report.visitorsRemarks = text ? [text] : [];
                     break;
             }
 
-            // Save the report
             saveReport();
         }
 
         function saveRefinedDataToReport() {
             if (!report) return;
 
-            // Initialize refined data storage if needed
             if (!report.refinedData) {
                 report.refinedData = {};
             }
 
-            // Save all refined data
             Object.keys(refinedData).forEach(section => {
                 if (refinedData[section]) {
                     report.refinedData[section] = refinedData[section];
@@ -449,7 +457,7 @@
 
             // Activities
             const activitiesText = report.activities?.map(a => a.narrative).join('\n\n') || 'No activities recorded';
-            document.getElementById('activities-original').innerHTML = activitiesText.replace(/\n/g, '<br>') || '<span class="text-white/40 italic">No data</span>';
+            document.getElementById('activities-original').innerHTML = activitiesText.replace(/\n/g, '<br>') || '<span class="text-slate-400 italic">No data</span>';
 
             // Issues - check for N/A
             if (naMarked.issues) {
@@ -457,12 +465,12 @@
                 document.getElementById('issues-section').classList.add('section-na');
                 document.getElementById('issues-na-badge').classList.remove('hidden');
                 document.getElementById('issues-refine-btn').classList.add('hidden');
-                document.getElementById('issues-original').innerHTML = '<span class="text-white/40 italic">N/A - No issues reported</span>';
-                document.getElementById('issues-refined').innerHTML = '<span class="text-white/40 italic">N/A</span>';
+                document.getElementById('issues-original').innerHTML = '<span class="text-slate-400 italic">N/A - No issues reported</span>';
+                document.getElementById('issues-refined').innerHTML = '<span class="text-slate-400 italic">N/A</span>';
                 document.getElementById('issues-refined').contentEditable = 'false';
             } else {
                 const issuesText = report.generalIssues?.join('\n\n') || 'No issues recorded';
-                document.getElementById('issues-original').innerHTML = issuesText.replace(/\n/g, '<br>') || '<span class="text-white/40 italic">No data</span>';
+                document.getElementById('issues-original').innerHTML = issuesText.replace(/\n/g, '<br>') || '<span class="text-slate-400 italic">No data</span>';
             }
 
             // Inspections - check for N/A
@@ -471,12 +479,12 @@
                 document.getElementById('inspections-section').classList.add('section-na');
                 document.getElementById('inspections-na-badge').classList.remove('hidden');
                 document.getElementById('inspections-refine-btn').classList.add('hidden');
-                document.getElementById('inspections-original').innerHTML = '<span class="text-white/40 italic">N/A - No inspections</span>';
-                document.getElementById('inspections-refined').innerHTML = '<span class="text-white/40 italic">N/A</span>';
+                document.getElementById('inspections-original').innerHTML = '<span class="text-slate-400 italic">N/A - No inspections</span>';
+                document.getElementById('inspections-refined').innerHTML = '<span class="text-slate-400 italic">N/A</span>';
                 document.getElementById('inspections-refined').contentEditable = 'false';
             } else {
                 const inspectionsText = report.qaqcNotes?.join('\n\n') || 'No inspections recorded';
-                document.getElementById('inspections-original').innerHTML = inspectionsText.replace(/\n/g, '<br>') || '<span class="text-white/40 italic">No data</span>';
+                document.getElementById('inspections-original').innerHTML = inspectionsText.replace(/\n/g, '<br>') || '<span class="text-slate-400 italic">No data</span>';
             }
 
             // Safety
@@ -487,7 +495,7 @@
                 safetyText = 'No incidents reported.\n\n';
             }
             safetyText += report.safety?.notes?.join('\n\n') || '';
-            document.getElementById('safety-original').innerHTML = safetyText.replace(/\n/g, '<br>') || '<span class="text-white/40 italic">No data</span>';
+            document.getElementById('safety-original').innerHTML = safetyText.replace(/\n/g, '<br>') || '<span class="text-slate-400 italic">No data</span>';
 
             // Visitors - check for N/A
             if (naMarked.visitors) {
@@ -495,19 +503,19 @@
                 document.getElementById('visitors-section').classList.add('section-na');
                 document.getElementById('visitors-na-badge').classList.remove('hidden');
                 document.getElementById('visitors-refine-btn').classList.add('hidden');
-                document.getElementById('visitors-original').innerHTML = '<span class="text-white/40 italic">N/A - No visitors</span>';
-                document.getElementById('visitors-refined').innerHTML = '<span class="text-white/40 italic">N/A</span>';
+                document.getElementById('visitors-original').innerHTML = '<span class="text-slate-400 italic">N/A - No visitors</span>';
+                document.getElementById('visitors-refined').innerHTML = '<span class="text-slate-400 italic">N/A</span>';
                 document.getElementById('visitors-refined').contentEditable = 'false';
             } else {
                 const visitorsText = report.visitorsRemarks?.join('\n\n') || 'No visitors recorded';
-                document.getElementById('visitors-original').innerHTML = visitorsText.replace(/\n/g, '<br>') || '<span class="text-white/40 italic">No data</span>';
+                document.getElementById('visitors-original').innerHTML = visitorsText.replace(/\n/g, '<br>') || '<span class="text-slate-400 italic">No data</span>';
             }
 
             // Photos
             const photosGrid = document.getElementById('photos-grid');
             if (report.photos?.length > 0) {
                 photosGrid.innerHTML = report.photos.map((p, i) => `
-                    <div class="relative bg-white/5 rounded-xl overflow-hidden">
+                    <div class="relative bg-slate-100 border-2 border-slate-200 overflow-hidden">
                         <img src="${p.url}" class="w-full aspect-square object-cover">
                         <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
                             <p class="text-[10px] text-white/70">${p.time || ''}</p>
@@ -515,7 +523,7 @@
                     </div>
                 `).join('');
             } else {
-                photosGrid.innerHTML = '<p class="text-white/40 italic col-span-full text-center py-4">No photos</p>';
+                photosGrid.innerHTML = '<p class="text-slate-400 italic col-span-full text-center py-4">No photos</p>';
             }
 
             // Load previously saved refined data
@@ -534,9 +542,8 @@
 
         // ============ AI REFINEMENT ============
         async function refineSection(section) {
-            // Check if section is N/A
             if (naSections[section]) {
-                showToast('Cannot refine N/A sections');
+                showToast('Cannot refine N/A sections', 'warning');
                 return;
             }
 
@@ -551,12 +558,12 @@
             const originalText = originalEl.textContent;
 
             if (!originalText || originalText === 'No data' || originalText.includes('N/A') || originalText.includes('No ') && originalText.includes(' recorded')) {
-                refinedEl.innerHTML = '<span class="text-white/40 italic">Nothing to refine</span>';
+                refinedEl.innerHTML = '<span class="text-slate-400 italic">Nothing to refine</span>';
                 return;
             }
 
             // Show loading state
-            refinedEl.innerHTML = '<div class="loading-shimmer rounded p-4 h-16"></div>';
+            refinedEl.innerHTML = '<div class="loading-shimmer p-4 h-16"></div>';
             refinedEl.contentEditable = 'false';
 
             try {
@@ -569,7 +576,6 @@
                     visitors: 'Rewrite this visitors and communications note in clear, professional language suitable for a construction daily report:'
                 };
 
-                // Get current date for context
                 const currentDate = new Date().toLocaleDateString('en-US', {
                     weekday: 'long',
                     year: 'numeric',
@@ -577,7 +583,6 @@
                     day: 'numeric'
                 });
 
-                // Use special prompt for safety incidents
                 let systemPrompt = '';
                 if (section === 'safety' && report.safety?.hasIncidents) {
                     systemPrompt = `You are a professional construction safety report writer. Today's date is ${currentDate}. Follow these rules strictly:
@@ -666,10 +671,8 @@
                 const data = await response.json();
                 const refinedText = data.choices[0]?.message?.content || 'Error refining text';
 
-                // Store refined data
                 refinedData[section] = refinedText;
 
-                // Display with typing effect and make editable again
                 refinedEl.innerHTML = '';
                 refinedEl.contentEditable = 'true';
                 const p = document.createElement('span');
@@ -677,12 +680,11 @@
                 p.innerHTML = refinedText.replace(/\n/g, '<br>');
                 refinedEl.appendChild(p);
 
-                // Save to report
                 saveRefinedDataToReport();
 
             } catch (error) {
                 console.error('Refinement error:', error);
-                refinedEl.innerHTML = `<span class="text-red-400">Error: ${error.message}</span>`;
+                refinedEl.innerHTML = `<span class="text-red-600">Error: ${error.message}</span>`;
                 refinedEl.contentEditable = 'true';
             }
         }
@@ -695,11 +697,9 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Refining...';
 
             for (const section of sections) {
-                // Skip N/A sections
                 if (naSections[section]) continue;
 
                 await refineSection(section);
-                // Small delay between API calls to avoid rate limiting
                 await new Promise(resolve => setTimeout(resolve, 500));
             }
 
@@ -707,13 +707,12 @@
             btn.innerHTML = '<i class="fas fa-check mr-2"></i>All Refined!';
 
             setTimeout(() => {
-                btn.innerHTML = '<i class="fas fa-magic text-lg"></i><span>Refine All with AI</span>';
+                btn.innerHTML = '<i class="fas fa-magic text-dot-yellow text-lg"></i><span>Refine All with AI</span>';
             }, 3000);
         }
 
         // ============ SAVE & VIEW ============
         function saveAndViewReport() {
-            // Save all current edits
             const sections = ['weather', 'activities', 'issues', 'inspections', 'safety', 'visitors'];
             sections.forEach(section => {
                 if (!naSections[section]) {
@@ -734,7 +733,6 @@
         }
 
         function saveAndExport() {
-            // Save first
             saveRefinedDataToReport();
 
             let exportText = `DAILY REPORT - ${report?.overview?.date || new Date().toLocaleDateString()}\n`;
@@ -762,7 +760,6 @@
                 }
             });
 
-            // Create download
             const blob = new Blob([exportText], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -775,7 +772,6 @@
         }
 
         function exportTrainingData() {
-            // Save current state first
             saveRefinedDataToReport();
 
             const currentDate = new Date().toLocaleDateString('en-US', {
@@ -830,7 +826,6 @@
             exportText += `END OF TRAINING DATA\n`;
             exportText += `${'='.repeat(50)}\n`;
 
-            // Create download
             const blob = new Blob([exportText], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -850,7 +845,7 @@
             const sections = ['weather', 'activities', 'issues', 'inspections', 'safety', 'visitors'];
             sections.forEach(section => {
                 if (naSections[section]) {
-                    return; // Skip N/A sections
+                    return;
                 }
                 const refined = refinedData[section];
                 const original = document.getElementById(`${section}-original`)?.textContent;
@@ -866,44 +861,40 @@
             });
         }
 
-        function showToast(message) {
+        function showToast(message, type = 'success') {
             const existing = document.querySelector('.toast-msg');
             if (existing) existing.remove();
 
+            const colors = { success: 'bg-safety-green', warning: 'bg-dot-orange', error: 'bg-red-600', info: 'bg-dot-blue' };
             const toast = document.createElement('div');
-            toast.className = 'toast-msg fixed bottom-24 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-full font-bold text-sm shadow-lg z-50';
-            toast.textContent = message;
+            toast.className = `toast-msg fixed bottom-24 left-1/2 -translate-x-1/2 ${colors[type] || colors.success} text-white px-6 py-3 font-bold text-sm shadow-lg z-50 flex items-center gap-2 uppercase`;
+            toast.innerHTML = `<i class="fas fa-check"></i>${message}`;
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 2000);
         }
 
         // ============ INIT ============
         document.addEventListener('DOMContentLoaded', () => {
-            // Set date
             document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
                 weekday: 'long',
                 month: 'long',
                 day: 'numeric'
             });
 
-            // Load report
             report = getReport();
 
             if (!report) {
                 document.querySelector('main').innerHTML = `
-                    <div class="text-center py-12">
-                        <i class="fas fa-inbox text-4xl text-white/20 mb-4"></i>
-                        <p class="text-white/50">No report found</p>
-                        <a href="index.html" class="inline-block mt-4 px-6 py-3 bg-indigo-600 rounded-xl font-bold text-white">Go to Dashboard</a>
+                    <div class="text-center py-12 bg-white border-2 border-slate-200">
+                        <i class="fas fa-inbox text-4xl text-slate-300 mb-4"></i>
+                        <p class="text-slate-500 uppercase text-sm font-bold">No report found</p>
+                        <a href="index.html" class="inline-block mt-4 px-6 py-3 bg-dot-navy text-white font-bold uppercase">Go to Dashboard</a>
                     </div>
                 `;
                 return;
             }
 
-            // Load API key
             loadApiKey();
-
-            // Display original data
             displayOriginalData();
         });
     </script>
