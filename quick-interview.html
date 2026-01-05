@@ -605,10 +605,77 @@
         }
 
         function saveReport() {
-            localStorage.setItem(getTodayKey(), JSON.stringify(report));
-            localStorage.setItem('fieldvoice_report', JSON.stringify(report));
-            updateAllPreviews();
-            updateProgress();
+            try {
+                const reportJson = JSON.stringify(report);
+                localStorage.setItem(getTodayKey(), reportJson);
+                localStorage.setItem('fieldvoice_report', reportJson);
+                updateAllPreviews();
+                updateProgress();
+            } catch (err) {
+                if (err.name === 'QuotaExceededError' || err.message.includes('quota')) {
+                    console.error('[STORAGE] Quota exceeded! Report size:', JSON.stringify(report).length, 'bytes');
+                    console.error('[STORAGE] Photos count:', report.photos.length);
+                    showToast('Storage full! Remove some photos.', 'error');
+                    // Try to save without the last photo
+                    if (report.photos.length > 0) {
+                        const removedPhoto = report.photos.pop();
+                        console.warn('[STORAGE] Removed last photo to free space:', removedPhoto.id);
+                        showToast('Last photo removed - storage full', 'warning');
+                        saveReport(); // Retry
+                    }
+                } else {
+                    console.error('[STORAGE] Save failed:', err);
+                    showToast('Failed to save report', 'error');
+                }
+            }
+        }
+
+        // ============ IMAGE COMPRESSION ============
+        async function compressImage(dataUrl, maxWidth = 1200, quality = 0.7) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => {
+                    try {
+                        // Calculate new dimensions
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+
+                        // Create canvas and draw resized image
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Convert to compressed JPEG
+                        const compressedUrl = canvas.toDataURL('image/jpeg', quality);
+
+                        console.log(`[PHOTO] Compressed: ${Math.round(dataUrl.length/1024)}KB -> ${Math.round(compressedUrl.length/1024)}KB (${width}x${height})`);
+
+                        resolve(compressedUrl);
+                    } catch (err) {
+                        reject(err);
+                    }
+                };
+                img.onerror = () => reject(new Error('Failed to load image for compression'));
+                img.src = dataUrl;
+            });
+        }
+
+        function getStorageUsage() {
+            let total = 0;
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    total += localStorage[key].length * 2; // UTF-16 = 2 bytes per char
+                }
+            }
+            return total;
         }
 
         // ============ WEATHER ============
@@ -946,10 +1013,10 @@
 
                 // Read file as data URL
                 try {
-                    const dataUrl = await new Promise((resolve, reject) => {
+                    const rawDataUrl = await new Promise((resolve, reject) => {
                         const reader = new FileReader();
                         reader.onload = (ev) => {
-                            console.log(`[PHOTO] FileReader success, data length: ${ev.target.result.length}`);
+                            console.log(`[PHOTO] FileReader success, raw size: ${Math.round(ev.target.result.length/1024)}KB`);
                             resolve(ev.target.result);
                         };
                         reader.onerror = (err) => {
@@ -962,6 +1029,29 @@
                         };
                         reader.readAsDataURL(file);
                     });
+
+                    // Compress image to reduce storage size (max 1200px width, 70% quality)
+                    console.log('[PHOTO] Compressing image...');
+                    showToast('Compressing photo...', 'info');
+                    let dataUrl = await compressImage(rawDataUrl, 1200, 0.7);
+
+                    // Check storage before saving
+                    const storageUsed = getStorageUsage();
+                    let photoSize = dataUrl.length * 2;
+                    console.log(`[PHOTO] Storage: ${Math.round(storageUsed/1024/1024*10)/10}MB used, photo: ${Math.round(photoSize/1024)}KB`);
+
+                    // If storage is getting full, try more aggressive compression
+                    if (storageUsed + photoSize > 4.5 * 1024 * 1024) {
+                        console.warn('[PHOTO] Storage nearly full, trying higher compression...');
+                        showToast('Storage low, compressing more...', 'warning');
+                        dataUrl = await compressImage(rawDataUrl, 800, 0.5);
+                        photoSize = dataUrl.length * 2;
+                        console.log(`[PHOTO] Re-compressed to: ${Math.round(photoSize/1024)}KB`);
+
+                        if (storageUsed + photoSize > 4.8 * 1024 * 1024) {
+                            throw new Error('Storage full - remove old photos first');
+                        }
+                    }
 
                     // Create timestamp
                     const now = new Date();
