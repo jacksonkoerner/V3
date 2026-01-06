@@ -12,14 +12,25 @@
             .page-break { page-break-before: always; }
             body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             @page { margin: 0.5in; }
+            .report-page { max-width: 8.5in; min-height: 11in; }
         }
-        .report-page {
-            min-height: 11in;
-            max-width: 8.5in;
+        @media screen {
+            .report-page { max-width: 100%; }
+        }
+        @media screen and (min-width: 768px) {
+            .report-page { max-width: 8.5in; min-height: auto; }
+        }
+        .table-scroll-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 4px;
+        }
+        .table-scroll-wrapper table {
+            min-width: 600px;
         }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen">
+<body class="bg-slate-100 min-h-screen overflow-x-hidden">
 
     <!-- NAVIGATION BAR (hidden on print) -->
     <div class="print-hidden sticky top-0 z-50 bg-white border-b shadow-sm">
@@ -44,15 +55,15 @@
         <!-- PAGE 1: OVERVIEW & WORK SUMMARY -->
         <div id="page1" class="report-page bg-white border-4 border-slate-900 p-1 mb-8 print:mb-0 print:border-2">
             <!-- Header -->
-            <div class="flex justify-between items-end border-b-2 border-slate-900 pb-2 mb-4 px-2">
-                <div class="flex items-center gap-4">
-                    <div class="w-14 h-14 bg-slate-200 flex items-center justify-center text-[8px] font-bold rounded">LOGO</div>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2 border-b-2 border-slate-900 pb-2 mb-4 px-2">
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <div class="w-10 h-10 sm:w-14 sm:h-14 bg-slate-200 flex items-center justify-center text-[7px] sm:text-[8px] font-bold rounded flex-shrink-0">LOGO</div>
                     <div>
-                        <h1 class="text-xl font-black uppercase tracking-tighter">RPR Daily Report</h1>
-                        <p class="text-[10px] text-slate-500 font-bold uppercase">Resident Project Representative</p>
+                        <h1 class="text-base sm:text-xl font-black uppercase tracking-tighter">RPR Daily Report</h1>
+                        <p class="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase">Resident Project Representative</p>
                     </div>
                 </div>
-                <div class="text-xs font-bold text-right">
+                <div class="text-[10px] sm:text-xs font-bold text-left sm:text-right">
                     <div id="reportDate" class="text-slate-600"></div>
                     <div>Page 1 of <span id="totalPages">4</span></div>
                 </div>
@@ -62,7 +73,7 @@
             <div class="bg-emerald-900 text-white text-center font-bold py-1 uppercase text-sm mb-2 mx-1">
                 Project Overview
             </div>
-            <div id="overviewGrid" class="grid grid-cols-2 gap-0 border border-slate-900 text-[10px] mx-1 mb-4">
+            <div id="overviewGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-0 border border-slate-900 text-[10px] mx-1 mb-4 overflow-hidden">
                 <!-- Filled by JS -->
             </div>
 
@@ -78,67 +89,71 @@
         <!-- PAGE 2: TABLES -->
         <div id="page2" class="report-page bg-white border-4 border-slate-900 p-1 mb-8 print:mb-0 print:border-2 page-break">
             <!-- Header -->
-            <div class="flex justify-between items-end border-b-2 border-slate-900 pb-2 mb-4 px-2">
-                <div class="flex items-center gap-4">
-                    <div class="w-14 h-14 bg-slate-200 flex items-center justify-center text-[8px] font-bold rounded">LOGO</div>
-                    <h1 class="text-xl font-black uppercase tracking-tighter">RPR Daily Report</h1>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2 border-b-2 border-slate-900 pb-2 mb-4 px-2">
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <div class="w-10 h-10 sm:w-14 sm:h-14 bg-slate-200 flex items-center justify-center text-[7px] sm:text-[8px] font-bold rounded flex-shrink-0">LOGO</div>
+                    <h1 class="text-base sm:text-xl font-black uppercase tracking-tighter">RPR Daily Report</h1>
                 </div>
-                <div class="text-xs font-bold">Page 2 of <span class="totalPages">4</span></div>
+                <div class="text-[10px] sm:text-xs font-bold">Page 2 of <span class="totalPages">4</span></div>
             </div>
 
             <!-- Daily Operations Table -->
             <div class="bg-emerald-900 text-white text-center font-bold py-1 uppercase text-sm mb-2 mx-1">
                 Daily Operations (Personnel On-Site)
             </div>
-            <table id="operationsTable" class="w-full text-[9px] border-collapse border border-slate-900 mx-1 mb-6" style="width: calc(100% - 8px);">
-                <thead class="bg-slate-100">
-                    <tr>
-                        <th class="border border-slate-900 p-1.5 text-left font-black">CONTRACTOR</th>
-                        <th class="border border-slate-900 p-1.5 text-left font-black">TRADE</th>
-                        <th class="border border-slate-900 p-1.5 text-center font-black w-12">SUPER(S)</th>
-                        <th class="border border-slate-900 p-1.5 text-center font-black w-12">FOREMAN</th>
-                        <th class="border border-slate-900 p-1.5 text-center font-black w-12">OPERATOR(S)</th>
-                        <th class="border border-slate-900 p-1.5 text-center font-black w-12">LABORER(S)</th>
-                        <th class="border border-slate-900 p-1.5 text-center font-black w-12">OTHER(S)</th>
-                        <th class="border border-slate-900 p-1.5 text-center font-black w-12 bg-emerald-100">TOTAL</th>
-                    </tr>
-                </thead>
-                <tbody id="operationsBody">
-                    <!-- Filled by JS -->
-                </tbody>
-                <tfoot id="operationsFoot" class="bg-slate-50 font-bold">
-                    <!-- Filled by JS -->
-                </tfoot>
-            </table>
+            <div class="table-scroll-wrapper mb-6">
+                <table id="operationsTable" class="w-full text-[9px] border-collapse border border-slate-900">
+                    <thead class="bg-slate-100">
+                        <tr>
+                            <th class="border border-slate-900 p-1.5 text-left font-black whitespace-nowrap">CONTRACTOR</th>
+                            <th class="border border-slate-900 p-1.5 text-left font-black whitespace-nowrap">TRADE</th>
+                            <th class="border border-slate-900 p-1.5 text-center font-black whitespace-nowrap">SUPER(S)</th>
+                            <th class="border border-slate-900 p-1.5 text-center font-black whitespace-nowrap">FOREMAN</th>
+                            <th class="border border-slate-900 p-1.5 text-center font-black whitespace-nowrap">OPERATOR(S)</th>
+                            <th class="border border-slate-900 p-1.5 text-center font-black whitespace-nowrap">LABORER(S)</th>
+                            <th class="border border-slate-900 p-1.5 text-center font-black whitespace-nowrap">OTHER(S)</th>
+                            <th class="border border-slate-900 p-1.5 text-center font-black whitespace-nowrap bg-emerald-100">TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="operationsBody">
+                        <!-- Filled by JS -->
+                    </tbody>
+                    <tfoot id="operationsFoot" class="bg-slate-50 font-bold">
+                        <!-- Filled by JS -->
+                    </tfoot>
+                </table>
+            </div>
 
             <!-- Equipment Table -->
             <div class="bg-emerald-900 text-white text-center font-bold py-1 uppercase text-sm mb-2 mx-1">
                 Mobilized Equipment & Daily Utilization
             </div>
-            <table class="w-full text-[9px] border-collapse border border-slate-900 mx-1" style="width: calc(100% - 8px);">
-                <thead class="bg-slate-100">
-                    <tr>
-                        <th class="border border-slate-900 p-1.5 text-left font-black">CONTRACTOR</th>
-                        <th class="border border-slate-900 p-1.5 text-left font-black">EQUIPMENT TYPE / MODEL</th>
-                        <th class="border border-slate-900 p-1.5 text-center font-black w-16">QUANTITY</th>
-                        <th class="border border-slate-900 p-1.5 text-left font-black">STATUS / NOTES</th>
-                    </tr>
-                </thead>
-                <tbody id="equipmentBody">
-                    <!-- Filled by JS -->
-                </tbody>
-            </table>
+            <div class="table-scroll-wrapper">
+                <table class="w-full text-[9px] border-collapse border border-slate-900">
+                    <thead class="bg-slate-100">
+                        <tr>
+                            <th class="border border-slate-900 p-1.5 text-left font-black whitespace-nowrap">CONTRACTOR</th>
+                            <th class="border border-slate-900 p-1.5 text-left font-black whitespace-nowrap">EQUIPMENT TYPE / MODEL</th>
+                            <th class="border border-slate-900 p-1.5 text-center font-black whitespace-nowrap">QTY</th>
+                            <th class="border border-slate-900 p-1.5 text-left font-black whitespace-nowrap">STATUS / NOTES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="equipmentBody">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- PAGE 3: ISSUES, QA/QC, SAFETY -->
         <div id="page3" class="report-page bg-white border-4 border-slate-900 p-1 mb-8 print:mb-0 print:border-2 page-break">
             <!-- Header -->
-            <div class="flex justify-between items-end border-b-2 border-slate-900 pb-2 mb-4 px-2">
-                <div class="flex items-center gap-4">
-                    <div class="w-14 h-14 bg-slate-200 flex items-center justify-center text-[8px] font-bold rounded">LOGO</div>
-                    <h1 class="text-xl font-black uppercase tracking-tighter">RPR Daily Report</h1>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2 border-b-2 border-slate-900 pb-2 mb-4 px-2">
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <div class="w-10 h-10 sm:w-14 sm:h-14 bg-slate-200 flex items-center justify-center text-[7px] sm:text-[8px] font-bold rounded flex-shrink-0">LOGO</div>
+                    <h1 class="text-base sm:text-xl font-black uppercase tracking-tighter">RPR Daily Report</h1>
                 </div>
-                <div class="text-xs font-bold">Page 3 of <span class="totalPages">4</span></div>
+                <div class="text-[10px] sm:text-xs font-bold">Page 3 of <span class="totalPages">4</span></div>
             </div>
 
             <!-- Issues & Delays -->
@@ -175,12 +190,12 @@
 
             <!-- Signature Block -->
             <div class="mt-8 mx-1 border-t-2 border-slate-900 pt-4">
-                <div class="flex justify-between items-end">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
                     <div class="text-[9px] text-slate-500 font-bold uppercase">
                         Report prepared by Resident Project Representative
                     </div>
-                    <div class="text-right">
-                        <div id="signatureLine" class="border-b border-slate-900 w-56 mb-1 h-8 flex items-end justify-center">
+                    <div class="text-right w-full sm:w-auto">
+                        <div id="signatureLine" class="border-b border-slate-900 w-full sm:w-56 mb-1 h-8 flex items-end justify-center">
                             <span class="italic font-serif text-lg text-slate-700"></span>
                         </div>
                         <div class="text-[8px] font-bold text-slate-500 uppercase">RPR Signature / Date</div>
@@ -192,19 +207,19 @@
         <!-- PAGE 4: PHOTOS (conditional) -->
         <div id="page4" class="report-page bg-white border-4 border-slate-900 p-1 mb-8 print:mb-0 print:border-2 page-break hidden">
             <!-- Header -->
-            <div class="flex justify-between items-end border-b-2 border-slate-900 pb-2 mb-4 px-2">
-                <div class="flex items-center gap-4">
-                    <div class="w-14 h-14 bg-slate-200 flex items-center justify-center text-[8px] font-bold rounded">LOGO</div>
-                    <h1 class="text-xl font-black uppercase tracking-tighter">RPR Daily Report</h1>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2 border-b-2 border-slate-900 pb-2 mb-4 px-2">
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <div class="w-10 h-10 sm:w-14 sm:h-14 bg-slate-200 flex items-center justify-center text-[7px] sm:text-[8px] font-bold rounded flex-shrink-0">LOGO</div>
+                    <h1 class="text-base sm:text-xl font-black uppercase tracking-tighter">RPR Daily Report</h1>
                 </div>
-                <div class="text-xs font-bold">Page 4 of <span class="totalPages">4</span></div>
+                <div class="text-[10px] sm:text-xs font-bold">Page 4 of <span class="totalPages">4</span></div>
             </div>
 
             <!-- Photos Section -->
             <div class="bg-emerald-900 text-white text-center font-bold py-1 uppercase text-sm mb-4 mx-1">
                 Daily Progress Photos
             </div>
-            <div id="photosGrid" class="grid grid-cols-2 gap-4 px-3">
+            <div id="photosGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4 px-3">
                 <!-- Filled by JS -->
             </div>
         </div>
@@ -308,43 +323,43 @@
 
             // Page 1: Overview Grid
             document.getElementById('overviewGrid').innerHTML = `
-                <div class="border-r border-b border-slate-900 p-2">
+                <div class="sm:border-r border-b border-slate-900 p-2">
                     <span class="font-black text-slate-600">PROJECT NAME:</span><br>
-                    <span class="font-bold">${o.projectName}</span>
+                    <span class="font-bold break-words">${o.projectName}</span>
                 </div>
                 <div class="border-b border-slate-900 p-2">
                     <span class="font-black text-slate-600">DATE:</span><br>
                     <span class="font-bold">${o.date}</span>
                 </div>
 
-                <div class="border-r border-b border-slate-900 p-2">
+                <div class="sm:border-r border-b border-slate-900 p-2">
                     <span class="font-black text-slate-600">NOAB PROJECT NO:</span><br>
                     <span class="font-bold">${o.noabProjectNo}</span>
                 </div>
                 <div class="border-b border-slate-900 p-2">
                     <span class="font-black text-slate-600">LOCATION:</span><br>
-                    <span class="font-bold">${o.location}</span>
+                    <span class="font-bold break-words">${o.location}</span>
                 </div>
 
-                <div class="border-r border-b border-slate-900 p-2">
+                <div class="sm:border-r border-b border-slate-900 p-2">
                     <span class="font-black text-slate-600">NOTICE TO PROCEED:</span><br>
                     <span class="font-bold">${o.noticeToProceed}</span>
                 </div>
                 <div class="border-b border-slate-900 p-2">
                     <span class="font-black text-slate-600">ENGINEER:</span><br>
-                    <span class="font-bold">${o.engineer}</span>
+                    <span class="font-bold break-words">${o.engineer}</span>
                 </div>
 
-                <div class="border-r border-b border-slate-900 p-2">
+                <div class="sm:border-r border-b border-slate-900 p-2">
                     <span class="font-black text-slate-600">CONTRACT DURATION:</span><br>
                     <span class="font-bold">${o.contractDuration}</span>
                 </div>
                 <div class="border-b border-slate-900 p-2">
                     <span class="font-black text-slate-600">PRIME CONTRACTOR:</span><br>
-                    <span class="font-bold">${o.contractor}</span>
+                    <span class="font-bold break-words">${o.contractor}</span>
                 </div>
 
-                <div class="border-r border-b border-slate-900 p-2">
+                <div class="sm:border-r border-b border-slate-900 p-2">
                     <span class="font-black text-slate-600">CONTRACT DAY NO:</span><br>
                     <span class="font-bold">${o.contractDayNo}</span>
                 </div>
@@ -353,7 +368,7 @@
                     <span class="font-bold">${o.startTime || '--'} - ${o.endTime || '--'} (${o.shiftDuration || '--'})</span>
                 </div>
 
-                <div class="border-r border-slate-900 p-2">
+                <div class="sm:border-r border-b sm:border-b-0 border-slate-900 p-2">
                     <span class="font-black text-slate-600">WEATHER CONDITIONS:</span><br>
                     <div class="grid grid-cols-2 gap-1 mt-1">
                         <span>High: <strong>${w.highTemp || '--'}</strong></span>
@@ -370,7 +385,7 @@
                         <span class="font-black text-slate-600">COMPLETED BY:</span>
                     </div>
                     <div class="text-right mt-2">
-                        <div class="border-b border-slate-900 w-full mb-1 pb-1 text-center italic font-serif text-base">${o.completedBy}</div>
+                        <div class="border-b border-slate-900 w-full mb-1 pb-1 text-center italic font-serif text-base break-words">${o.completedBy}</div>
                         <div class="text-[8px] font-black text-slate-500 uppercase">RPR Name & Title</div>
                     </div>
                 </div>
